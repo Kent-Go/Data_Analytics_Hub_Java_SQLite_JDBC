@@ -3,6 +3,8 @@ package analytics.view;
 import analytics.EmptyInputException;
 import analytics.UserVerificationFailException;
 import analytics.model.Database;
+import analytics.model.User;
+
 import java.io.IOException;
 
 import javafx.event.ActionEvent;
@@ -32,8 +34,8 @@ public class LoginController {
 	    checkInputEmpty(username);
 	    checkInputEmpty(password);
 	    dataBase.verifyUser(username, password);
-	    
-	    DashboardViewer dashboardViewer = new DashboardViewer();
+	    User loginUser = dataBase.retrieveUser(username);
+	    DashboardViewer dashboardViewer = new DashboardViewer(loginUser);
 	    primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 	    primaryStage.setTitle(dashboardViewer.getTitle());
 	    primaryStage.setScene(dashboardViewer.getScene());
@@ -49,6 +51,7 @@ public class LoginController {
 		loginFailedAlert.setContentText(e.getMessage());
 		loginFailedAlert.show();
 	}catch (IOException e) {
+	   e.printStackTrace();
 	    Alert fileLoadingErrorAlert = new Alert(AlertType.ERROR);
 	    fileLoadingErrorAlert.setHeaderText("Fail loading LoginView.fxml");
 	    fileLoadingErrorAlert.setContentText("LoginView.fxml file path is not found");

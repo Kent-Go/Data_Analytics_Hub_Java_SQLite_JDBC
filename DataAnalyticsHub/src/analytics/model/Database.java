@@ -60,6 +60,10 @@ public class Database {
 	}
 
     }
+    
+    public User retrieveUser(String username) {
+	return usersDatabase.get(username);
+    }
 
     public void createUser(User newUser) {
 	usersDatabase.put(newUser.getUsername(), newUser);
