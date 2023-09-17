@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 
+import analytics.UserVerificationFailException;
+import analytics.UsernameExistedException;
+
 public class Database {
     private static final String DB_URL = "jdbc:sqlite:DataAnalyticsHub.db";
 
@@ -79,20 +82,21 @@ public class Database {
 
     }
 
-    public boolean verifyUser(String username, String password) {
-	if (usersDatabase.get(username).getPassword().equals(password)) {
-	    return true;
-	}
-	return false;
-    }
-
-    public boolean checkUserExist(String username) {
+    public void verifyUser(String username, String password) throws UserVerificationFailException {
 	if (usersDatabase.get(username) instanceof User) {
-	    if (usersDatabase.get(username).getUsername().equals(username)) {
-		return true;
+	    if (usersDatabase.get(username).getPassword().equals(password)) {
+		return;
 	    }
 	}
-	return false;
+	throw new UserVerificationFailException();
+    }
+
+    public void checkUserExist(String username) throws UsernameExistedException {
+	if (usersDatabase.get(username) instanceof User) {
+	    if (usersDatabase.get(username).getUsername().equals(username)) {
+		throw new UsernameExistedException();
+	    }
+	}
     }
 
     public void updateUser(User outdatedUser, User updatedUser) {

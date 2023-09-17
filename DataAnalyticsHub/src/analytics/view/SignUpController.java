@@ -1,9 +1,12 @@
 package analytics.view;
 
+import analytics.UsernameExistedException;
 import analytics.model.Database;
 import analytics.model.User;
+import analytics.EmptyInputException;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -36,24 +39,30 @@ public class SignUpController {
 
 	// handle empty input
 
-	if (dataBase.checkUserExist(username)) {
+	try {
+	    checkInputEmpty(username);
+	    checkInputEmpty(password);
+	    checkInputEmpty(firstName);
+	    checkInputEmpty(lastName);
+	    dataBase.checkUserExist(username);
+	    // Handle password, first name and last name error
+	    dataBase.createUser(new User(username, password, firstName, lastName, 0));
+	    Alert loginFailedAlert = new Alert(AlertType.INFORMATION);
+	    loginFailedAlert.setHeaderText("Sign Up Success. Your user profile is created.");
+	    loginFailedAlert.setContentText("Click OK to proceed to login.");
+	    loginFailedAlert.showAndWait();
+	    redirectLoginPage(event);
+	} catch (EmptyInputException e) {
 	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
 	    loginFailedAlert.setHeaderText("Sign Up Failed");
-	    loginFailedAlert.setContentText("Username is already registered. Please try again.");
+	    loginFailedAlert.setContentText(e.getMessage());
 	    loginFailedAlert.show();
-	    return;
+	} catch (UsernameExistedException e) {
+	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
+	    loginFailedAlert.setHeaderText("Sign Up Failed");
+	    loginFailedAlert.setContentText(e.getMessage());
+	    loginFailedAlert.show();
 	}
-
-	// Handle email, password, first name and last name error
-
-	dataBase.createUser(new User(username, password, firstName, lastName, 0));
-
-	Alert loginFailedAlert = new Alert(AlertType.INFORMATION);
-	loginFailedAlert.setHeaderText("Sign Up Success. Your user profile is created.");
-	loginFailedAlert.setContentText("Click OK to proceed to login.");
-	loginFailedAlert.showAndWait();
-
-	redirectLoginPage(event);
     }
 
     public void redirectLoginPage(ActionEvent event) {
@@ -72,5 +81,17 @@ public class SignUpController {
 	}
 
 	primaryStage.setResizable(false);
+    }
+
+    /**
+     * The method to check if input is empty to throw user-defined
+     * EmptyContentException
+     * 
+     * @param content The string to be validate
+     */
+    private void checkInputEmpty(String input) throws EmptyInputException {
+	if (input.isEmpty()) {
+	    throw new EmptyInputException();
+	}
     }
 }

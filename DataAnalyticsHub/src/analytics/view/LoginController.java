@@ -1,5 +1,7 @@
 package analytics.view;
 
+import analytics.EmptyInputException;
+import analytics.UserVerificationFailException;
 import analytics.model.Database;
 import java.io.IOException;
 
@@ -26,27 +28,31 @@ public class LoginController {
 
 	Database dataBase = new Database();
 
-	if (dataBase.verifyUser(username, password)) {
+	try {
+	    checkInputEmpty(username);
+	    checkInputEmpty(password);
+	    dataBase.verifyUser(username, password);
+	    
 	    DashboardViewer dashboardViewer = new DashboardViewer();
-
 	    primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 	    primaryStage.setTitle(dashboardViewer.getTitle());
-
-	    try {
-		primaryStage.setScene(dashboardViewer.getScene());
-	    } catch (IOException e) {
-		Alert fileLoadingErrorAlert = new Alert(AlertType.ERROR);
-		fileLoadingErrorAlert.setHeaderText("Fail loading LoginView.fxml");
-		fileLoadingErrorAlert.setContentText("LoginView.fxml file path is not found");
-		fileLoadingErrorAlert.show();
-	    }
-
+	    primaryStage.setScene(dashboardViewer.getScene());
 	    primaryStage.setResizable(false);
-	} else {
+	} catch (EmptyInputException e) {
 	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
-	    loginFailedAlert.setHeaderText("Login Failed");
-	    loginFailedAlert.setContentText("Username and/or password is incorrect. Please try again.");
+	    loginFailedAlert.setHeaderText("Sign Up Failed");
+	    loginFailedAlert.setContentText(e.getMessage());
 	    loginFailedAlert.show();
+	} catch (UserVerificationFailException e) {
+		Alert loginFailedAlert = new Alert(AlertType.ERROR);
+		loginFailedAlert.setHeaderText("Login Failed");
+		loginFailedAlert.setContentText(e.getMessage());
+		loginFailedAlert.show();
+	}catch (IOException e) {
+	    Alert fileLoadingErrorAlert = new Alert(AlertType.ERROR);
+	    fileLoadingErrorAlert.setHeaderText("Fail loading LoginView.fxml");
+	    fileLoadingErrorAlert.setContentText("LoginView.fxml file path is not found");
+	    fileLoadingErrorAlert.show();
 	}
     }
 
@@ -66,5 +72,17 @@ public class LoginController {
 	}
 
 	primaryStage.setResizable(false);
+    }
+
+    /**
+     * The method to check if input is empty to throw user-defined
+     * EmptyContentException
+     * 
+     * @param content The string to be validate
+     */
+    private void checkInputEmpty(String input) throws EmptyInputException {
+	if (input.isEmpty()) {
+	    throw new EmptyInputException();
+	}
     }
 }
