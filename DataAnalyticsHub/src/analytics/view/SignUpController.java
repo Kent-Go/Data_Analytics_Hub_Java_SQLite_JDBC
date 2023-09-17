@@ -4,6 +4,7 @@ import analytics.UsernameExistedException;
 import analytics.model.Database;
 import analytics.model.User;
 import analytics.EmptyInputException;
+import analytics.InvalidPasswordLengthException;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -45,7 +46,8 @@ public class SignUpController {
 	    checkInputEmpty(firstName);
 	    checkInputEmpty(lastName);
 	    dataBase.checkUserExist(username);
-	    // Handle password, first name and last name error
+	    checkPasswordLength(password);
+	    
 	    dataBase.createUser(new User(username, password, firstName, lastName, 0));
 	    Alert loginFailedAlert = new Alert(AlertType.INFORMATION);
 	    loginFailedAlert.setHeaderText("Sign Up Success. Your user profile is created.");
@@ -58,6 +60,11 @@ public class SignUpController {
 	    loginFailedAlert.setContentText(e.getMessage());
 	    loginFailedAlert.show();
 	} catch (UsernameExistedException e) {
+	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
+	    loginFailedAlert.setHeaderText("Sign Up Failed");
+	    loginFailedAlert.setContentText(e.getMessage());
+	    loginFailedAlert.show();
+	} catch (InvalidPasswordLengthException e) {
 	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
 	    loginFailedAlert.setHeaderText("Sign Up Failed");
 	    loginFailedAlert.setContentText(e.getMessage());
@@ -92,6 +99,12 @@ public class SignUpController {
     private void checkInputEmpty(String input) throws EmptyInputException {
 	if (input.isEmpty()) {
 	    throw new EmptyInputException();
+	}
+    }
+    
+    private void checkPasswordLength(String input) throws InvalidPasswordLengthException {
+	if (input.length() < 8) {
+	    throw new InvalidPasswordLengthException();
 	}
     }
 }
