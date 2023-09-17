@@ -26,9 +26,9 @@ public class Database {
     // Method to create new table
     private void createUsersAndPostsTable() {
 	try (Connection con = getConnection(); Statement statement = con.createStatement();) {
-	    statement.addBatch("CREATE TABLE IF NOT EXISTS " + "Users" + "(ID INT AUTOINCREMENT,"
-		    + "USERNAME VARCHAR(15) NOT NULL," + "PASSWORD TEXT NOT NULL," + "FIRSTNAME TEXT NOT NULL,"
-		    + "LASTNAME TEXT NOT NULL," + "VIP BOOLEAN NOT NULL," + "PRIMARY KEY (USERNAME));");
+	    statement.addBatch("CREATE TABLE IF NOT EXISTS " + "Users" + "(USERNAME VARCHAR(15) NOT NULL,"
+		    + "PASSWORD TEXT NOT NULL," + "FIRSTNAME TEXT NOT NULL," + "LASTNAME TEXT NOT NULL,"
+		    + "VIP INT NOT NULL," + "PRIMARY KEY (USERNAME));");
 	    statement.addBatch("CREATE TABLE IF NOT EXISTS " + "Posts" + "(ID INT NOT NULL," + "CONTENT TEXT NOT NULL,"
 		    + "AUTHOR VARCHAR(15) NOT NULL," + "LIKES INT NOT NULL," + "SHARES INT NOT NULL,"
 		    + "DATETIME TEXT NOT NULL," + "PRIMARY KEY (ID),"
@@ -49,7 +49,7 @@ public class Database {
 		    usersDatabase.put(resultSetAllUsers.getString("USERNAME"),
 			    new User(resultSetAllUsers.getString("USERNAME"), resultSetAllUsers.getString("PASSWORD"),
 				    resultSetAllUsers.getString("FIRSTNAME"), resultSetAllUsers.getString("LASTNAME"),
-				    resultSetAllUsers.getBoolean("VIP")));
+				    resultSetAllUsers.getInt("VIP")));
 		}
 	    }
 	} catch (SQLException e) {
@@ -59,11 +59,13 @@ public class Database {
     }
 
     public void createUser(User newUser) {
-	this.usersDatabase.put(newUser.getUsername(), newUser);
+	usersDatabase.put(newUser.getUsername(), newUser);
 
 	try (Connection con = getConnection(); Statement statement = con.createStatement();) {
-	    String query = String.format("INSERT INTO Users (USERNAME,PASSWORD,FIRSTNAME,LASTNAME, VIP) VALUES ('%s','%s', '%s', '%s', 0)", newUser.getUsername(),
-		    newUser.getPassword(), newUser.getFirstName(), newUser.getLastName());
+	    String query = String.format(
+		    "INSERT INTO Users (USERNAME,PASSWORD,FIRSTNAME,LASTNAME, VIP) VALUES ('%s','%s', '%s', '%s', '%d')",
+		    newUser.getUsername(), newUser.getPassword(), newUser.getFirstName(), newUser.getLastName(),
+		    newUser.getVip());
 
 	    int result = statement.executeUpdate(query);
 
@@ -77,15 +79,31 @@ public class Database {
 
     }
 
+    public boolean verifyUser(String username, String password) {
+	if (usersDatabase.get(username).getPassword().equals(password)) {
+	    return true;
+	}
+	return false;
+    }
+
+    public boolean checkUserExist(String username) {
+	if (usersDatabase.get(username) instanceof User) {
+	    if (usersDatabase.get(username).getUsername().equals(username)) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
     public void updateUser(User outdatedUser, User updatedUser) {
-	this.usersDatabase.remove(outdatedUser.getUsername());
-	this.usersDatabase.put(updatedUser.getUsername(), updatedUser);
+	usersDatabase.remove(outdatedUser.getUsername());
+	usersDatabase.put(updatedUser.getUsername(), updatedUser);
 
 	try (Connection con = getConnection(); Statement statement = con.createStatement();) {
 	    String query = String.format(
-		    "UPDATE Users SET USERNAME = '%s', PASSWORD = '%s', FIRSTNAME = '%s', LASTNAME = '%s' WHERE ID = 1;",
+		    "UPDATE Users SET USERNAME = '%s', PASSWORD = '%s', FIRSTNAME = '%s', LASTNAME = '%s' WHERE USERNAME = '%s';",
 		    updatedUser.getUsername(), updatedUser.getPassword(), updatedUser.getFirstName(),
-		    updatedUser.getLastName());
+		    updatedUser.getLastName(), outdatedUser.getUsername());
 
 	    int result = statement.executeUpdate(query);
 
