@@ -7,22 +7,20 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 
-public class DashboardViewer {
-    
+public class EditProfileViewer {
+            
     public String getTitle() {
-	return "Dashboard";
+	return "Edit Profile";
     }
 
     public Scene getScene(User loginUser) throws IOException {
-	FXMLLoader loader = new FXMLLoader(getClass().getResource("DashboardView.fxml"));
+	FXMLLoader loader = new FXMLLoader(getClass().getResource("EditProfileView.fxml"));
 	
 	Pane pane = loader.load();
-	DashboardController dashboardController = loader.getController();
-	dashboardController.initaliseUser(loginUser);
-	dashboardController.displayWelcomeMessage();
+	EditProfileController editProfileController = loader.getController();
+	editProfileController.initaliseUser(loginUser);
 	
 	Scene scene = new Scene(pane);
 	return scene;
     }
-    
 }

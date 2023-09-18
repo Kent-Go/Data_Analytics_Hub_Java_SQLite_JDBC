@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="255.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="analytics.view.SignUpController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="216.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="analytics.view.EditProfileController">
    <children>
       <Label layoutX="44.0" layoutY="55.0" text="Username:" />
       <Label layoutX="44.0" layoutY="85.0" text="Password:" />
@@ -16,13 +16,12 @@
       <TextField fx:id="passwordInputField" layoutX="106.0" layoutY="81.0" prefHeight="8.0" />
       <TextField fx:id="firstNameInputField" layoutX="106.0" layoutY="111.0" prefHeight="8.0" />
       <TextField fx:id="lastNameInputField" layoutX="106.0" layoutY="141.0" prefHeight="8.0" />
-      <Button layoutX="121.0" layoutY="173.0" mnemonicParsing="false" onAction="#signUpUser" text="Sign Up" />
-      <Label layoutX="122.0" layoutY="14.0" text="Sign Up">
+      <Button layoutX="118.0" layoutY="173.0" mnemonicParsing="false" onAction="#saveEdit" text="Save Edit" />
+      <Label layoutX="111.0" layoutY="14.0" text="Edit Profile">
          <font>
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
-      <Label layoutX="76.0" layoutY="220.0" text="Have an account?" />
-      <Button layoutX="178.0" layoutY="216.0" mnemonicParsing="false" onAction="#redirectLoginPage" text="Login" />
+      <Button layoutX="189.0" layoutY="173.0" mnemonicParsing="false" onAction="#cancelEditProfile" text="Cancel" />
    </children>
 </Pane>

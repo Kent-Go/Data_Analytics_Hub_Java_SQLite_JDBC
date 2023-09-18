@@ -17,9 +17,12 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-public class SignUpController {
+public class EditProfileController {
 
     private Stage primaryStage;
+    
+    private User loginUser;
+    private User updatedUser;
 
     @FXML
     private TextField usernameInputField;
@@ -30,7 +33,11 @@ public class SignUpController {
     @FXML
     private TextField lastNameInputField;
 
-    public void signUpUser(ActionEvent event) {
+    public void initaliseUser(User loginUser) {
+	this.loginUser = loginUser;
+    }
+    
+    public void saveEdit(ActionEvent event) {
 	String username = usernameInputField.getText();
 	String password = passwordInputField.getText();
 	String firstName = firstNameInputField.getText();
@@ -46,38 +53,57 @@ public class SignUpController {
 	    dataBase.checkUserExist(username);
 	    checkPasswordLength(password);
 	    
-	    dataBase.createUser(new User(username, password, firstName, lastName, 0));
+	    this.updatedUser = new User(username, password, firstName, lastName, 0);
+	    dataBase.updateUser(loginUser, updatedUser);
 	    Alert loginFailedAlert = new Alert(AlertType.INFORMATION);
-	    loginFailedAlert.setHeaderText("Sign Up Success. Your user profile is created.");
-	    loginFailedAlert.setContentText("Click OK to proceed to login.");
+	    loginFailedAlert.setHeaderText("Edit Profile Success. Your new user profile is now saved.");
+	    loginFailedAlert.setContentText("Click OK to go back to dashboard.");
 	    loginFailedAlert.showAndWait();
-	    redirectLoginPage(event);
+	    redirectDashboardPage(event);
 	} catch (EmptyInputException e) {
 	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
-	    loginFailedAlert.setHeaderText("Sign Up Failed");
+	    loginFailedAlert.setHeaderText("Edit Profile Failed");
 	    loginFailedAlert.setContentText(e.getMessage());
 	    loginFailedAlert.show();
 	} catch (UsernameExistedException e) {
 	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
-	    loginFailedAlert.setHeaderText("Sign Up Failed");
+	    loginFailedAlert.setHeaderText("Edit Profile Failed");
 	    loginFailedAlert.setContentText(e.getMessage());
 	    loginFailedAlert.show();
 	} catch (InvalidPasswordLengthException e) {
 	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
-	    loginFailedAlert.setHeaderText("Sign Up Failed");
+	    loginFailedAlert.setHeaderText("Edit Profile Failed");
 	    loginFailedAlert.setContentText(e.getMessage());
 	    loginFailedAlert.show();
 	}
     }
-
-    public void redirectLoginPage(ActionEvent event) {
-	LoginViewer loginViewer = new LoginViewer();
+    
+    public void redirectDashboardPage(ActionEvent event) {
+	DashboardViewer dashboardViewer = new DashboardViewer();
 
 	primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-	primaryStage.setTitle(loginViewer.getTitle());
+	primaryStage.setTitle(dashboardViewer.getTitle());
 
 	try {
-	    primaryStage.setScene(loginViewer.getScene());
+	    primaryStage.setScene(dashboardViewer.getScene(updatedUser));
+	} catch (IOException e) {
+	    Alert fileLoadingErrorAlert = new Alert(AlertType.ERROR);
+	    fileLoadingErrorAlert.setHeaderText("Fail loading LoginView.fxml");
+	    fileLoadingErrorAlert.setContentText("LoginView.fxml file path is not found");
+	    fileLoadingErrorAlert.show();
+	}
+
+	primaryStage.setResizable(false);
+    }
+    
+    public void cancelEditProfile (ActionEvent event) {
+	DashboardViewer dashboardViewer = new DashboardViewer();
+
+	primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+	primaryStage.setTitle(dashboardViewer.getTitle());
+	
+	try {
+	    primaryStage.setScene(dashboardViewer.getScene(loginUser));
 	} catch (IOException e) {
 	    Alert fileLoadingErrorAlert = new Alert(AlertType.ERROR);
 	    fileLoadingErrorAlert.setHeaderText("Fail loading LoginView.fxml");

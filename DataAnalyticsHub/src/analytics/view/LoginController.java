@@ -35,10 +35,10 @@ public class LoginController {
 	    checkInputEmpty(password);
 	    dataBase.verifyUser(username, password);
 	    User loginUser = dataBase.retrieveUser(username);
-	    DashboardViewer dashboardViewer = new DashboardViewer(loginUser);
+	    DashboardViewer dashboardViewer = new DashboardViewer();
 	    primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 	    primaryStage.setTitle(dashboardViewer.getTitle());
-	    primaryStage.setScene(dashboardViewer.getScene());
+	    primaryStage.setScene(dashboardViewer.getScene(loginUser));
 	    primaryStage.setResizable(false);
 	} catch (EmptyInputException e) {
 	    Alert loginFailedAlert = new Alert(AlertType.ERROR);

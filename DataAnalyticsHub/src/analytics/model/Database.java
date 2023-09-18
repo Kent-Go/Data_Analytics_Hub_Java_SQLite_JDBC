@@ -116,7 +116,7 @@ public class Database {
 	    int result = statement.executeUpdate(query);
 
 	    if (result == 1) {
-		System.out.println("User profile created successfully");
+		System.out.println("User profile edited successfully");
 		System.out.println(result + " row(s) affected");
 	    }
 	} catch (SQLException e) {
