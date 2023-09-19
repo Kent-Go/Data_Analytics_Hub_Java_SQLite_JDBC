@@ -2,7 +2,9 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="analytics.view.DashboardController">
@@ -19,5 +21,32 @@
       </Label>
       <Button layoutX="14.0" layoutY="57.0" mnemonicParsing="false" onAction="#redirectEditProfilePage" text="Edit Profile" />
       <Button layoutX="534.0" layoutY="32.0" mnemonicParsing="false" onAction="#logOutUser" text="Logout" />
+      <VBox layoutX="14.0" layoutY="93.0" prefHeight="229.0" prefWidth="577.0">
+         <children>
+            <Pane prefHeight="226.0" prefWidth="577.0" style="-fx-border-color: black;">
+               <children>
+                  <Label fx:id="welcomeMessage1" layoutX="7.0" layoutY="6.0" text="Add New Post">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="7.0" layoutY="27.0" text="Post ID:" />
+                  <Label layoutX="118.0" layoutY="27.0" text="Number of Like:" />
+                  <Label layoutX="271.0" layoutY="27.0" text="Number of Share:" />
+                  <Label layoutX="432.0" layoutY="27.0" text="Author:" />
+                  <Label fx:id="addPostAuthorLabelField" layoutX="475.0" layoutY="28.0" text="Username" />
+                  <Label layoutX="7.0" layoutY="60.0" text="Content:" />
+                  <Label layoutX="375.0" layoutY="60.0" text="DateTime:" />
+                  <TextField fx:id="addPostIDInputField" layoutX="54.0" layoutY="23.0" prefHeight="25.0" prefWidth="54.0" />
+                  <TextField fx:id="addPostLikesInputField" layoutX="206.0" layoutY="23.0" prefHeight="25.0" prefWidth="54.0" />
+                  <TextField fx:id="addPostSharesInputField" layoutX="367.0" layoutY="23.0" prefHeight="25.0" prefWidth="54.0" />
+                  <TextField fx:id="addPostContentInputField" layoutX="54.0" layoutY="56.0" prefHeight="25.0" prefWidth="307.0" />
+                  <TextField fx:id="addPostDateTimeInputField" layoutX="434.0" layoutY="56.0" prefHeight="25.0" prefWidth="136.0" />
+                  <Button layoutX="8.0" layoutY="90.0" mnemonicParsing="false" onAction="#addPost" text="Add Post" />
+               </children>
+            </Pane>
+            <Pane prefHeight="205.0" prefWidth="577.0" style="-fx-border-color: black;" />
+         </children>
+      </VBox>
    </children>
 </Pane>

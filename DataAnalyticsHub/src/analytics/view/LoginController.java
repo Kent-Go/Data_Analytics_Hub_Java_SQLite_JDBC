@@ -18,17 +18,21 @@ import javafx.stage.Stage;
 public class LoginController {
 
     private Stage primaryStage;
+    
+    private Database dataBase;
 
     @FXML
     private TextField usernameInputField;
     @FXML
     private TextField passwordInputField;
+    
+    public LoginController() {
+	dataBase = new Database();
+    }
 
     public void loginUser(ActionEvent event) {
 	String username = usernameInputField.getText();
 	String password = passwordInputField.getText();
-
-	Database dataBase = new Database();
 
 	try {
 	    checkInputEmpty(username);

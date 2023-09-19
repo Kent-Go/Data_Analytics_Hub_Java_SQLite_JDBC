@@ -20,6 +20,8 @@ import javafx.stage.Stage;
 public class SignUpController {
 
     private Stage primaryStage;
+    
+    private Database dataBase;
 
     @FXML
     private TextField usernameInputField;
@@ -30,13 +32,15 @@ public class SignUpController {
     @FXML
     private TextField lastNameInputField;
 
+    public SignUpController() {
+	dataBase = new Database();
+    }
+    
     public void signUpUser(ActionEvent event) {
 	String username = usernameInputField.getText();
 	String password = passwordInputField.getText();
 	String firstName = firstNameInputField.getText();
 	String lastName = lastNameInputField.getText();
-
-	Database dataBase = new Database();
 
 	try {
 	    checkInputEmpty(username);

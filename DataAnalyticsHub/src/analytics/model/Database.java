@@ -7,18 +7,24 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 
+import analytics.ExistedPostIDException;
 import analytics.UserVerificationFailException;
 import analytics.UsernameExistedException;
 
 public class Database {
     private static final String DB_URL = "jdbc:sqlite:DataAnalyticsHub.db";
 
-    protected final HashMap<String, User> usersDatabase;
+    private HashMap<String, User> usersDatabase;
+
+    private HashMap<Integer, Post> postsDatabase;
 
     public Database() {
+	usersDatabase = new HashMap<String, User>();
+	postsDatabase = new HashMap<Integer, Post>();
+
 	createUsersAndPostsTable();
-	this.usersDatabase = new HashMap<String, User>();
 	retreieveAllUsers();
+	retreieveAllPosts();
     }
 
     // Method to return connection object
@@ -29,13 +35,14 @@ public class Database {
     // Method to create new table
     private void createUsersAndPostsTable() {
 	try (Connection con = getConnection(); Statement statement = con.createStatement();) {
+	    statement.addBatch("PRAGMA foreign_keys = ON;");
 	    statement.addBatch("CREATE TABLE IF NOT EXISTS " + "Users" + "(USERNAME VARCHAR(15) NOT NULL,"
 		    + "PASSWORD TEXT NOT NULL," + "FIRSTNAME TEXT NOT NULL," + "LASTNAME TEXT NOT NULL,"
 		    + "VIP INT NOT NULL," + "PRIMARY KEY (USERNAME));");
 	    statement.addBatch("CREATE TABLE IF NOT EXISTS " + "Posts" + "(ID INT NOT NULL," + "CONTENT TEXT NOT NULL,"
 		    + "AUTHOR VARCHAR(15) NOT NULL," + "LIKES INT NOT NULL," + "SHARES INT NOT NULL,"
 		    + "DATETIME TEXT NOT NULL," + "PRIMARY KEY (ID),"
-		    + "FOREIGN KEY (AUTHOR) REFERENCES Users(USERNAME)ON UPDATE CASCADE" + ");");
+		    + "FOREIGN KEY (AUTHOR) REFERENCES Users(USERNAME) ON UPDATE CASCADE " + ");");
 	    statement.executeBatch();
 	} catch (SQLException e) {
 	    System.out.println(e.getMessage());
@@ -44,6 +51,7 @@ public class Database {
     }
 
     public void retreieveAllUsers() {
+	usersDatabase.clear();
 	try (Connection con = getConnection(); Statement statement = con.createStatement();) {
 	    String query = "SELECT * FROM Users";
 
@@ -58,9 +66,8 @@ public class Database {
 	} catch (SQLException e) {
 	    System.out.println(e.getMessage());
 	}
-
     }
-    
+
     public User retrieveUser(String username) {
 	return usersDatabase.get(username);
     }
@@ -122,6 +129,63 @@ public class Database {
 	} catch (SQLException e) {
 	    System.out.println(e.getMessage());
 	}
+	
+	retreieveAllPosts();
+    }
+
+    public void retreieveAllPosts() {
+	postsDatabase.clear();
+	try (Connection con = getConnection(); Statement statement = con.createStatement();) {
+	    String query = "SELECT * FROM Posts";
+
+	    try (ResultSet resultSetAllPosts = statement.executeQuery(query)) {
+		while (resultSetAllPosts.next()) {
+		    postsDatabase.put(resultSetAllPosts.getInt("ID"),
+			    new Post(resultSetAllPosts.getInt("ID"), resultSetAllPosts.getString("CONTENT"),
+				    resultSetAllPosts.getString("AUTHOR"), resultSetAllPosts.getInt("LIKES"),
+				    resultSetAllPosts.getInt("SHARES"), resultSetAllPosts.getString("DATETIME")));
+		}
+	    }
+	} catch (SQLException e) {
+	    System.out.println(e.getMessage());
+	}
+    }
+
+    public Post retrievePost(int id) {
+	return postsDatabase.get(id);
+    }
+
+    public void createPost(Post newPost) {
+	postsDatabase.put(newPost.getId(), newPost);
+
+	try (Connection con = getConnection(); Statement statement = con.createStatement();) {
+	    String query = String.format(
+		    "INSERT INTO Posts (ID,CONTENT,AUTHOR,LIKES,SHARES,DATETIME) VALUES ('%d','%s', '%s', '%d', '%d', '%s')",
+		    newPost.getId(), newPost.getContent(), newPost.getAuthor(), newPost.getLikes(), newPost.getShares(),
+		    newPost.getDateTime());
+
+	    int result = statement.executeUpdate(query);
+
+	    if (result == 1) {
+		System.out.println("New post created successfully");
+		System.out.println(result + " row(s) affected");
+	    }
+	} catch (SQLException e) {
+	    System.out.println(e.getMessage());
+	}
 
     }
+
+    /**
+     * The method to check if postID is existed in database to throw user-defined
+     * ExistedPostIDException
+     * 
+     * @param integer The postID integer to be validate
+     */
+    public void checkPostIDExist(int id) throws ExistedPostIDException {
+	if (postsDatabase.get(id) instanceof Post) {
+	    throw new ExistedPostIDException(id);
+	}
+    }
+
 }
