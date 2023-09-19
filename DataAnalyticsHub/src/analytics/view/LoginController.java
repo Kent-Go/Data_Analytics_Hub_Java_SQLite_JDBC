@@ -42,16 +42,16 @@ public class LoginController {
 	    primaryStage.setResizable(false);
 	} catch (EmptyInputException e) {
 	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
-	    loginFailedAlert.setHeaderText("Sign Up Failed");
+	    loginFailedAlert.setHeaderText("Login Failed");
 	    loginFailedAlert.setContentText(e.getMessage());
 	    loginFailedAlert.show();
 	} catch (UserVerificationFailException e) {
-		Alert loginFailedAlert = new Alert(AlertType.ERROR);
-		loginFailedAlert.setHeaderText("Login Failed");
-		loginFailedAlert.setContentText(e.getMessage());
-		loginFailedAlert.show();
-	}catch (IOException e) {
-	   e.printStackTrace();
+	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
+	    loginFailedAlert.setHeaderText("Login Failed");
+	    loginFailedAlert.setContentText(e.getMessage());
+	    loginFailedAlert.show();
+	} catch (IOException e) {
+	    e.printStackTrace();
 	    Alert fileLoadingErrorAlert = new Alert(AlertType.ERROR);
 	    fileLoadingErrorAlert.setHeaderText("Fail loading LoginView.fxml");
 	    fileLoadingErrorAlert.setContentText("LoginView.fxml file path is not found");
