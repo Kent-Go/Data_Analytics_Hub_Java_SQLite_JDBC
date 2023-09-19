@@ -101,7 +101,7 @@ public class SignUpController {
     }
     
     private void checkPasswordLength(String input) throws InvalidPasswordLengthException {
-	if (input.length() < 8) {
+	if (input.length() < 6) {
 	    throw new InvalidPasswordLengthException();
 	}
     }

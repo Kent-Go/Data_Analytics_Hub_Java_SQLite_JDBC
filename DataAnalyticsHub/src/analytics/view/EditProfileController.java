@@ -35,6 +35,14 @@ public class EditProfileController {
 
     public void initaliseUser(User loginUser) {
 	this.loginUser = loginUser;
+	setTextField();;
+    }
+    
+    private void setTextField() {
+	usernameInputField.setText(loginUser.getUsername());
+	passwordInputField.setText(loginUser.getPassword());
+	firstNameInputField.setText(loginUser.getFirstName());
+	lastNameInputField.setText(loginUser.getLastName());
     }
     
     public void saveEdit(ActionEvent event) {
@@ -50,7 +58,11 @@ public class EditProfileController {
 	    checkInputEmpty(password);
 	    checkInputEmpty(firstName);
 	    checkInputEmpty(lastName);
-	    dataBase.checkUserExist(username);
+	    
+	    if (!username.equals(loginUser.getUsername())) {
+		dataBase.checkUserExist(username);
+	    }
+
 	    checkPasswordLength(password);
 	    
 	    this.updatedUser = new User(username, password, firstName, lastName, 0);
@@ -127,7 +139,7 @@ public class EditProfileController {
     }
     
     private void checkPasswordLength(String input) throws InvalidPasswordLengthException {
-	if (input.length() < 8) {
+	if (input.length() < 6) {
 	    throw new InvalidPasswordLengthException();
 	}
     }
