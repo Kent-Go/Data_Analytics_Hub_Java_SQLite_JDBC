@@ -1,4 +1,4 @@
-package analytics.view;
+package analytics.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,10 +16,11 @@ import analytics.InvalidNegativeIntegerException;
 import analytics.model.Database;
 import analytics.model.Post;
 import analytics.model.User;
+import analytics.view.EditProfileViewer;
+import analytics.view.LoginViewer;
 import analytics.InvalidContentException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -58,6 +59,10 @@ public class DashboardController {
     public DashboardController() {
 	dataBase = new Database();
     }
+    
+    public void setPrimaryStage(Stage primaryStage) {
+   	this.primaryStage = primaryStage;
+    }
 
     public void initaliseUser(User loginUser) {
 	this.loginUser = loginUser;
@@ -68,10 +73,11 @@ public class DashboardController {
 	welcomeMessage.setText(String.format("Welcome, %s %s", loginUser.getFirstName(), loginUser.getLastName()));
     }
 
-    public void redirectEditProfilePage(ActionEvent event) {
+    @FXML
+    public void redirectEditProfilePageHandler(ActionEvent event) {
 	try {
 	    EditProfileViewer editProfileViewer = new EditProfileViewer();
-	    primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+	    editProfileViewer.setPrimaryStage(primaryStage);
 	    primaryStage.setTitle(editProfileViewer.getTitle());
 	    primaryStage.setScene(editProfileViewer.getScene(loginUser));
 	    primaryStage.setResizable(false);
@@ -83,7 +89,8 @@ public class DashboardController {
 	}
     }
 
-    public void logOutUser(ActionEvent event) {
+    @FXML
+    public void logOutUserHandler(ActionEvent event) {
 	Alert logOutSuccessAlert = new Alert(AlertType.INFORMATION);
 	logOutSuccessAlert.setHeaderText("You are now logged out.");
 	logOutSuccessAlert.setContentText("Click OK to proceed to login.");
@@ -94,7 +101,7 @@ public class DashboardController {
     public void redirectLoginPage(ActionEvent event) {
 	LoginViewer loginViewer = new LoginViewer();
 
-	primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+	loginViewer.setPrimaryStage(primaryStage);
 	primaryStage.setTitle(loginViewer.getTitle());
 
 	try {
@@ -109,7 +116,8 @@ public class DashboardController {
 	primaryStage.setResizable(false);
     }
 
-    public void addPost(ActionEvent event) {
+    @FXML
+    public void addPostHandler(ActionEvent event) {
 
 	try {
 	    String id = addPostIDInputField.getText();
@@ -131,7 +139,13 @@ public class DashboardController {
 	    addPostSuccess.setHeaderText("Add Post Success. Your new post is now saved.");
 	    addPostSuccess.setContentText("Click OK to go back to dashboard.");
 	    addPostSuccess.showAndWait();
-	    redirectDashboardPage(event);
+	    
+	    addPostIDInputField.setText("");
+	    addPostAuthorLabelField.setText(""); // post author
+	    addPostLikesInputField.setText("");
+	    addPostSharesInputField.setText("");
+	    addPostContentInputField.setText("");
+	    addPostDateTimeInputField.setText("");
 	} catch (ExistedPostIDException postIDExisted) {
 	    Alert PostIDExistedAlert = new Alert(AlertType.ERROR);
 	    PostIDExistedAlert.setHeaderText("Add Post Failed");
@@ -165,24 +179,6 @@ public class DashboardController {
 	    parseErrorAlert.show();
 	}
 
-    }
-
-    public void redirectDashboardPage(ActionEvent event) {
-	DashboardViewer dashboardViewer = new DashboardViewer();
-
-	primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-	primaryStage.setTitle(dashboardViewer.getTitle());
-
-	try {
-	    primaryStage.setScene(dashboardViewer.getScene(loginUser));
-	} catch (IOException e) {
-	    Alert fileLoadingErrorAlert = new Alert(AlertType.ERROR);
-	    fileLoadingErrorAlert.setHeaderText("Fail loading LoginView.fxml");
-	    fileLoadingErrorAlert.setContentText("LoginView.fxml file path is not found");
-	    fileLoadingErrorAlert.show();
-	}
-
-	primaryStage.setResizable(false);
     }
 
     /**

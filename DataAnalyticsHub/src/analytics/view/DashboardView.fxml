@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="analytics.view.DashboardController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="analytics.controller.DashboardController">
    <children>
       <Label layoutX="262.0" layoutY="14.0" text="Dashboard">
          <font>
@@ -19,8 +19,8 @@
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <Button layoutX="14.0" layoutY="57.0" mnemonicParsing="false" onAction="#redirectEditProfilePage" text="Edit Profile" />
-      <Button layoutX="534.0" layoutY="32.0" mnemonicParsing="false" onAction="#logOutUser" text="Logout" />
+      <Button layoutX="14.0" layoutY="57.0" mnemonicParsing="false" onAction="#redirectEditProfilePageHandler" text="Edit Profile" />
+      <Button layoutX="534.0" layoutY="32.0" mnemonicParsing="false" onAction="#logOutUserHandler" text="Logout" />
       <VBox layoutX="14.0" layoutY="93.0" prefHeight="229.0" prefWidth="577.0">
          <children>
             <Pane prefHeight="226.0" prefWidth="577.0" style="-fx-border-color: black;">
@@ -42,7 +42,7 @@
                   <TextField fx:id="addPostSharesInputField" layoutX="367.0" layoutY="23.0" prefHeight="25.0" prefWidth="54.0" />
                   <TextField fx:id="addPostContentInputField" layoutX="54.0" layoutY="56.0" prefHeight="25.0" prefWidth="307.0" />
                   <TextField fx:id="addPostDateTimeInputField" layoutX="434.0" layoutY="56.0" prefHeight="25.0" prefWidth="136.0" />
-                  <Button layoutX="8.0" layoutY="90.0" mnemonicParsing="false" onAction="#addPost" text="Add Post" />
+                  <Button layoutX="8.0" layoutY="90.0" mnemonicParsing="false" onAction="#addPostHandler" text="Add Post" />
                </children>
             </Pane>
             <Pane prefHeight="205.0" prefWidth="577.0" style="-fx-border-color: black;" />

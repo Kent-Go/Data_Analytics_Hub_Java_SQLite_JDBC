@@ -1,8 +1,9 @@
-package analytics.view;
+package analytics.controller;
 
 import analytics.UsernameExistedException;
 import analytics.model.Database;
 import analytics.model.User;
+import analytics.view.DashboardViewer;
 import analytics.EmptyInputException;
 import analytics.InvalidPasswordLengthException;
 
@@ -11,7 +12,6 @@ import java.util.regex.Pattern;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
@@ -33,6 +33,10 @@ public class EditProfileController {
     @FXML
     private TextField lastNameInputField;
 
+    public void setPrimaryStage(Stage primaryStage) {
+	this.primaryStage = primaryStage;
+    }
+    
     public void initaliseUser(User loginUser) {
 	this.loginUser = loginUser;
 	setTextField();;
@@ -45,7 +49,8 @@ public class EditProfileController {
 	lastNameInputField.setText(loginUser.getLastName());
     }
     
-    public void saveEdit(ActionEvent event) {
+    @FXML
+    public void saveProfileEditHandler(ActionEvent event) {
 	String username = usernameInputField.getText();
 	String password = passwordInputField.getText();
 	String firstName = firstNameInputField.getText();
@@ -71,7 +76,7 @@ public class EditProfileController {
 	    loginFailedAlert.setHeaderText("Edit Profile Success. Your new user profile is now saved.");
 	    loginFailedAlert.setContentText("Click OK to go back to dashboard.");
 	    loginFailedAlert.showAndWait();
-	    redirectDashboardPage(event);
+	    redirectDashboardPageHandler(event);
 	} catch (EmptyInputException e) {
 	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
 	    loginFailedAlert.setHeaderText("Edit Profile Failed");
@@ -90,10 +95,11 @@ public class EditProfileController {
 	}
     }
     
-    public void redirectDashboardPage(ActionEvent event) {
+    @FXML
+    public void redirectDashboardPageHandler(ActionEvent event) {
 	DashboardViewer dashboardViewer = new DashboardViewer();
 
-	primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+	dashboardViewer.setPrimaryStage(primaryStage);
 	primaryStage.setTitle(dashboardViewer.getTitle());
 
 	try {
@@ -108,10 +114,10 @@ public class EditProfileController {
 	primaryStage.setResizable(false);
     }
     
-    public void cancelEditProfile (ActionEvent event) {
+    public void cancelEditProfileHandler (ActionEvent event) {
 	DashboardViewer dashboardViewer = new DashboardViewer();
 
-	primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+	dashboardViewer.setPrimaryStage(primaryStage);
 	primaryStage.setTitle(dashboardViewer.getTitle());
 	
 	try {

@@ -1,8 +1,9 @@
-package analytics.view;
+package analytics.controller;
 
 import analytics.UsernameExistedException;
 import analytics.model.Database;
 import analytics.model.User;
+import analytics.view.LoginViewer;
 import analytics.EmptyInputException;
 import analytics.InvalidPasswordLengthException;
 
@@ -11,7 +12,6 @@ import java.util.regex.Pattern;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
@@ -36,7 +36,12 @@ public class SignUpController {
 	dataBase = new Database();
     }
     
-    public void signUpUser(ActionEvent event) {
+    public void setPrimaryStage(Stage primaryStage) {
+	this.primaryStage = primaryStage;
+    }
+    
+    @FXML
+    public void signUpUserHandler(ActionEvent event) {
 	String username = usernameInputField.getText();
 	String password = passwordInputField.getText();
 	String firstName = firstNameInputField.getText();
@@ -55,7 +60,7 @@ public class SignUpController {
 	    loginFailedAlert.setHeaderText("Sign Up Success. Your user profile is created.");
 	    loginFailedAlert.setContentText("Click OK to proceed to login.");
 	    loginFailedAlert.showAndWait();
-	    redirectLoginPage(event);
+	    redirectLoginPageHandler(event);
 	} catch (EmptyInputException e) {
 	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
 	    loginFailedAlert.setHeaderText("Sign Up Failed");
@@ -74,10 +79,11 @@ public class SignUpController {
 	}
     }
 
-    public void redirectLoginPage(ActionEvent event) {
+    @FXML
+    public void redirectLoginPageHandler(ActionEvent event) {
 	LoginViewer loginViewer = new LoginViewer();
 
-	primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+	loginViewer.setPrimaryStage(primaryStage);
 	primaryStage.setTitle(loginViewer.getTitle());
 
 	try {

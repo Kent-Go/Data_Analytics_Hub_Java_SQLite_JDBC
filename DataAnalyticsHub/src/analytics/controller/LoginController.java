@@ -1,15 +1,16 @@
-package analytics.view;
+package analytics.controller;
 
 import analytics.EmptyInputException;
 import analytics.UserVerificationFailException;
 import analytics.model.Database;
 import analytics.model.User;
+import analytics.view.DashboardViewer;
+import analytics.view.SignUpViewer;
 
 import java.io.IOException;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
@@ -29,8 +30,13 @@ public class LoginController {
     public LoginController() {
 	dataBase = new Database();
     }
+    
+    public void setPrimaryStage(Stage primaryStage) {
+	this.primaryStage = primaryStage;
+    }
 
-    public void loginUser(ActionEvent event) {
+    @FXML
+    public void loginUserHandler(ActionEvent event) {
 	String username = usernameInputField.getText();
 	String password = passwordInputField.getText();
 
@@ -39,8 +45,10 @@ public class LoginController {
 	    checkInputEmpty(password);
 	    dataBase.verifyUser(username, password);
 	    User loginUser = dataBase.retrieveUser(username);
+	    
+	    
 	    DashboardViewer dashboardViewer = new DashboardViewer();
-	    primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+	    dashboardViewer.setPrimaryStage(primaryStage);
 	    primaryStage.setTitle(dashboardViewer.getTitle());
 	    primaryStage.setScene(dashboardViewer.getScene(loginUser));
 	    primaryStage.setResizable(false);
@@ -63,10 +71,11 @@ public class LoginController {
 	}
     }
 
-    public void redirectSignUpPage(ActionEvent event) {
+    @FXML
+    public void redirectSignUpHandler(ActionEvent event) {
 	SignUpViewer signUpViewer = new SignUpViewer();
 
-	primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+	signUpViewer.setPrimaryStage(primaryStage);
 	primaryStage.setTitle(signUpViewer.getTitle());
 
 	try {
