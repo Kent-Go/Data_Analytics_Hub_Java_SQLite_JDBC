@@ -46,7 +46,6 @@ public class LoginController {
 	    dataBase.verifyUser(username, password);
 	    User loginUser = dataBase.retrieveUser(username);
 	    
-	    
 	    DashboardViewer dashboardViewer = new DashboardViewer();
 	    dashboardViewer.setPrimaryStage(primaryStage);
 	    primaryStage.setTitle(dashboardViewer.getTitle());

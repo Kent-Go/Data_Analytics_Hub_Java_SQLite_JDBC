@@ -114,6 +114,8 @@ public class Database {
 	usersDatabase.remove(outdatedUser.getUsername());
 	usersDatabase.put(updatedUser.getUsername(), updatedUser);
 
+	// FIXTHIS: Update post author
+
 	try (Connection con = getConnection(); Statement statement = con.createStatement();) {
 	    String query = String.format(
 		    "UPDATE Users SET USERNAME = '%s', PASSWORD = '%s', FIRSTNAME = '%s', LASTNAME = '%s' WHERE USERNAME = '%s';",
@@ -125,11 +127,12 @@ public class Database {
 	    if (result == 1) {
 		System.out.println("User profile edited successfully");
 		System.out.println(result + " row(s) affected");
+		System.out.println(query);
 	    }
 	} catch (SQLException e) {
 	    System.out.println(e.getMessage());
 	}
-	
+
 	retreieveAllPosts();
     }
 
@@ -168,6 +171,24 @@ public class Database {
 
 	    if (result == 1) {
 		System.out.println("New post created successfully");
+		System.out.println(result + " row(s) affected");
+	    }
+	} catch (SQLException e) {
+	    System.out.println(e.getMessage());
+	}
+
+    }
+
+    public void removePost(int id) {
+	postsDatabase.remove(id);
+
+	try (Connection con = getConnection(); Statement statement = con.createStatement();) {
+	    String query = String.format("DELETE FROM Posts WHERE ID = '%d'", id);
+
+	    int result = statement.executeUpdate(query);
+
+	    if (result == 1) {
+		System.out.println("Remove post successfully");
 		System.out.println(result + " row(s) affected");
 	    }
 	} catch (SQLException e) {

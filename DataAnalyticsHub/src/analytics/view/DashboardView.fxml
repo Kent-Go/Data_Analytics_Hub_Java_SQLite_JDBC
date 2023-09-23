@@ -2,9 +2,13 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="analytics.controller.DashboardController">
@@ -21,32 +25,62 @@
       </Label>
       <Button layoutX="14.0" layoutY="57.0" mnemonicParsing="false" onAction="#redirectEditProfilePageHandler" text="Edit Profile" />
       <Button layoutX="534.0" layoutY="32.0" mnemonicParsing="false" onAction="#logOutUserHandler" text="Logout" />
-      <VBox layoutX="14.0" layoutY="93.0" prefHeight="229.0" prefWidth="577.0">
-         <children>
-            <Pane prefHeight="226.0" prefWidth="577.0" style="-fx-border-color: black;">
-               <children>
-                  <Label fx:id="welcomeMessage1" layoutX="7.0" layoutY="6.0" text="Add New Post">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="7.0" layoutY="27.0" text="Post ID:" />
-                  <Label layoutX="118.0" layoutY="27.0" text="Number of Like:" />
-                  <Label layoutX="271.0" layoutY="27.0" text="Number of Share:" />
-                  <Label layoutX="432.0" layoutY="27.0" text="Author:" />
-                  <Label fx:id="addPostAuthorLabelField" layoutX="475.0" layoutY="28.0" text="Username" />
-                  <Label layoutX="7.0" layoutY="60.0" text="Content:" />
-                  <Label layoutX="375.0" layoutY="60.0" text="DateTime:" />
-                  <TextField fx:id="addPostIDInputField" layoutX="54.0" layoutY="23.0" prefHeight="25.0" prefWidth="54.0" />
-                  <TextField fx:id="addPostLikesInputField" layoutX="206.0" layoutY="23.0" prefHeight="25.0" prefWidth="54.0" />
-                  <TextField fx:id="addPostSharesInputField" layoutX="367.0" layoutY="23.0" prefHeight="25.0" prefWidth="54.0" />
-                  <TextField fx:id="addPostContentInputField" layoutX="54.0" layoutY="56.0" prefHeight="25.0" prefWidth="307.0" />
-                  <TextField fx:id="addPostDateTimeInputField" layoutX="434.0" layoutY="56.0" prefHeight="25.0" prefWidth="136.0" />
-                  <Button layoutX="8.0" layoutY="90.0" mnemonicParsing="false" onAction="#addPostHandler" text="Add Post" />
-               </children>
-            </Pane>
-            <Pane prefHeight="205.0" prefWidth="577.0" style="-fx-border-color: black;" />
-         </children>
-      </VBox>
+      <TabPane layoutX="12.0" layoutY="101.0" prefHeight="274.0" prefWidth="577.0" style="-fx-border-color: black;" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Add New Post">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="121.0" prefWidth="577.0">
+                     <children>
+                        <Label layoutX="7.0" layoutY="11.0" text="Post ID:" />
+                        <Label layoutX="118.0" layoutY="11.0" text="Number of Like:" />
+                        <Label layoutX="271.0" layoutY="11.0" text="Number of Share:" />
+                        <Label layoutX="432.0" layoutY="11.0" text="Author:" />
+                        <Label fx:id="addPostAuthorLabelField" layoutX="475.0" layoutY="12.0" text="Username" />
+                        <Label layoutX="7.0" layoutY="44.0" text="Content:" />
+                        <Label layoutX="375.0" layoutY="44.0" text="DateTime:" />
+                        <TextField fx:id="addPostIDInputField" layoutX="54.0" layoutY="7.0" prefHeight="25.0" prefWidth="54.0" />
+                        <TextField fx:id="addPostLikesInputField" layoutX="206.0" layoutY="7.0" prefHeight="25.0" prefWidth="54.0" />
+                        <TextField fx:id="addPostSharesInputField" layoutX="367.0" layoutY="7.0" prefHeight="25.0" prefWidth="54.0" />
+                        <TextField fx:id="addPostContentInputField" layoutX="54.0" layoutY="40.0" prefHeight="25.0" prefWidth="307.0" />
+                        <TextField fx:id="addPostDateTimeInputField" layoutX="434.0" layoutY="40.0" prefHeight="25.0" prefWidth="136.0" />
+                        <Button layoutX="8.0" layoutY="74.0" mnemonicParsing="false" onAction="#addPostHandler" text="Add Post" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Retrieve Post">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Label layoutX="7.0" layoutY="9.0" text="Post ID:" />
+                        <TextField fx:id="retrievePostIDInputField" layoutX="54.0" layoutY="5.0" prefHeight="25.0" prefWidth="54.0" />
+                        <Button layoutX="121.0" layoutY="5.0" mnemonicParsing="false" onAction="#retrievePostHandler" text="Retrieve" />
+                        <TableView fx:id="retrievePostTableView" layoutX="11.0" layoutY="37.0" prefHeight="61.0" prefWidth="553.0">
+                          <columns>
+                            <TableColumn fx:id="retrievePostIDColumn" prefWidth="42.0" text="ID" />
+                            <TableColumn fx:id="retrievePostContentColumn" prefWidth="187.0" text="Content" />
+                              <TableColumn fx:id="retrievePostAuthorColumn" minWidth="0.0" prefWidth="73.0" text="Author" />
+                              <TableColumn fx:id="retrievePostLikesColumn" prefWidth="66.0" text="Likes" />
+                              <TableColumn fx:id="retrievePostSharesColumn" prefWidth="67.0" text="Shares" />
+                              <TableColumn fx:id="retrievePostDateTimeColumn" prefWidth="117.0" text="DateTime" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="Remove Post">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Label layoutX="7.0" layoutY="9.0" text="Post ID:" />
+                        <TextField fx:id="removePostIDInputField" layoutX="54.0" layoutY="5.0" prefHeight="25.0" prefWidth="54.0" />
+                        <Button layoutX="121.0" layoutY="5.0" mnemonicParsing="false" onAction="#removePostHandler" text="Remove" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+        </tabs>
+      </TabPane>
    </children>
 </Pane>

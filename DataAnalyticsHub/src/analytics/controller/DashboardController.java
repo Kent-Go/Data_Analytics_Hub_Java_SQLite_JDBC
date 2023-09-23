@@ -23,8 +23,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 public class DashboardController {
@@ -56,12 +59,33 @@ public class DashboardController {
     @FXML
     private TextField addPostDateTimeInputField;
 
+    @FXML
+    private TextField retrievePostIDInputField;
+
+    @FXML
+    private TableView<Post> retrievePostTableView;
+    @FXML
+    private TableColumn<Post, Integer> retrievePostIDColumn;
+    @FXML
+    private TableColumn<Post, String> retrievePostContentColumn;
+    @FXML
+    private TableColumn<Post, String> retrievePostAuthorColumn;
+    @FXML
+    private TableColumn<Post, Integer> retrievePostLikesColumn;
+    @FXML
+    private TableColumn<Post, Integer> retrievePostSharesColumn;
+    @FXML
+    private TableColumn<Post, String> retrievePostDateTimeColumn;
+
+    @FXML
+    private TextField removePostIDInputField;
+
     public DashboardController() {
 	dataBase = new Database();
     }
-    
+
     public void setPrimaryStage(Stage primaryStage) {
-   	this.primaryStage = primaryStage;
+	this.primaryStage = primaryStage;
     }
 
     public void initaliseUser(User loginUser) {
@@ -139,23 +163,23 @@ public class DashboardController {
 	    addPostSuccess.setHeaderText("Add Post Success. Your new post is now saved.");
 	    addPostSuccess.setContentText("Click OK to go back to dashboard.");
 	    addPostSuccess.showAndWait();
-	    
+
 	    addPostIDInputField.setText("");
 	    addPostAuthorLabelField.setText(""); // post author
 	    addPostLikesInputField.setText("");
 	    addPostSharesInputField.setText("");
 	    addPostContentInputField.setText("");
 	    addPostDateTimeInputField.setText("");
-	} catch (ExistedPostIDException postIDExisted) {
-	    Alert PostIDExistedAlert = new Alert(AlertType.ERROR);
-	    PostIDExistedAlert.setHeaderText("Add Post Failed");
-	    PostIDExistedAlert.setContentText(postIDExisted.getMessage());
-	    PostIDExistedAlert.show();
 	} catch (EmptyInputException inputEmptyError) {
 	    Alert inputEmptyErrorAlert = new Alert(AlertType.ERROR);
 	    inputEmptyErrorAlert.setHeaderText("Add Post Failed");
 	    inputEmptyErrorAlert.setContentText(inputEmptyError.getMessage());
 	    inputEmptyErrorAlert.show();
+	} catch (ExistedPostIDException postIDExisted) {
+	    Alert PostIDExistedAlert = new Alert(AlertType.ERROR);
+	    PostIDExistedAlert.setHeaderText("Add Post Failed");
+	    PostIDExistedAlert.setContentText(postIDExisted.getMessage());
+	    PostIDExistedAlert.show();
 	} catch (NumberFormatException numberFormatError) {
 	    Alert numberFormatErrorAlert = new Alert(AlertType.ERROR);
 	    numberFormatErrorAlert.setHeaderText("Add Post Failed");
@@ -179,6 +203,105 @@ public class DashboardController {
 	    parseErrorAlert.show();
 	}
 
+    }
+
+    @FXML
+    public void retrievePostHandler(ActionEvent event) {
+	try {
+	    retrievePostTableView.getItems().clear();
+
+	    String id = retrievePostIDInputField.getText();
+
+	    Post post = readInputRetrievePostID(id);
+
+	    if (post != null) {
+		retrievePostTableView.getItems().add(post);
+		retrievePostIDColumn.setCellValueFactory(new PropertyValueFactory<Post, Integer>("id"));
+		retrievePostContentColumn.setCellValueFactory(new PropertyValueFactory<Post, String>("content"));
+		retrievePostAuthorColumn.setCellValueFactory(new PropertyValueFactory<Post, String>("author"));
+		retrievePostLikesColumn.setCellValueFactory(new PropertyValueFactory<Post, Integer>("likes"));
+		retrievePostSharesColumn.setCellValueFactory(new PropertyValueFactory<Post, Integer>("shares"));
+		retrievePostDateTimeColumn.setCellValueFactory(new PropertyValueFactory<Post, String>("dateTime"));
+		retrievePostIDInputField.setText("");
+	    } else {
+		Alert postNotExistAlert = new Alert(AlertType.ERROR);
+		postNotExistAlert.setHeaderText("Retreive Post Failed");
+		postNotExistAlert.setContentText("Sorry the post does not exist in the database!");
+		postNotExistAlert.show();
+	    }
+	} catch (EmptyInputException inputEmptyError) {
+	    Alert inputEmptyErrorAlert = new Alert(AlertType.ERROR);
+	    inputEmptyErrorAlert.setHeaderText("Retreive Post Failed");
+	    inputEmptyErrorAlert.setContentText(inputEmptyError.getMessage());
+	    inputEmptyErrorAlert.show();
+	} catch (NumberFormatException numberFormatError) {
+	    Alert numberFormatErrorAlert = new Alert(AlertType.ERROR);
+	    numberFormatErrorAlert.setHeaderText("Retreive Post Failed");
+	    numberFormatErrorAlert.setContentText("Input must be an integer value.");
+	    numberFormatErrorAlert.show();
+	} catch (InvalidNegativeIntegerException integerNegativeError) {
+	    Alert integerNegativeErrorAlert = new Alert(AlertType.ERROR);
+	    integerNegativeErrorAlert.setHeaderText("Add Post Failed");
+	    integerNegativeErrorAlert.setContentText(integerNegativeError.getMessage());
+	    integerNegativeErrorAlert.show();
+	}
+    }
+
+    @FXML
+    public void removePostHandler(ActionEvent event) {
+	try {
+	    String id = removePostIDInputField.getText();
+
+	    Post post = readInputRetrievePostID(id);
+
+	    if (post != null) {
+		dataBase.removePost(post.getId());
+		Alert removePostSuccess = new Alert(AlertType.INFORMATION);
+		removePostSuccess.setHeaderText("Remove Post Success");
+		removePostSuccess.setContentText("The post is successfully removed from the database!");
+		removePostSuccess.showAndWait();
+		removePostIDInputField.setText("");
+	    } else {
+		Alert postNotExistAlert = new Alert(AlertType.ERROR);
+		postNotExistAlert.setHeaderText("Remove Post Failed");
+		postNotExistAlert.setContentText("Sorry the post does not exist in the database!");
+		postNotExistAlert.show();
+	    }
+	} catch (EmptyInputException inputEmptyError) {
+	    Alert inputEmptyErrorAlert = new Alert(AlertType.ERROR);
+	    inputEmptyErrorAlert.setHeaderText("Remove Post Failed");
+	    inputEmptyErrorAlert.setContentText(inputEmptyError.getMessage());
+	    inputEmptyErrorAlert.show();
+	} catch (NumberFormatException numberFormatError) {
+	    Alert numberFormatErrorAlert = new Alert(AlertType.ERROR);
+	    numberFormatErrorAlert.setHeaderText("Remove Post Failed");
+	    numberFormatErrorAlert.setContentText("Input must be an integer value.");
+	    numberFormatErrorAlert.show();
+	} catch (InvalidNegativeIntegerException integerNegativeError) {
+	    Alert integerNegativeErrorAlert = new Alert(AlertType.ERROR);
+	    integerNegativeErrorAlert.setHeaderText("Remove Post Failed");
+	    integerNegativeErrorAlert.setContentText(integerNegativeError.getMessage());
+	    integerNegativeErrorAlert.show();
+	}
+    }
+
+    private Post readInputRetrievePostID(String input)
+	    throws EmptyInputException, InvalidNegativeIntegerException, NumberFormatException {
+	int postID = 0;
+	Post post;
+	try {
+	    input = input.trim();
+	    postID = readInputNonNegativeInt(input);
+	    post = dataBase.retrievePost(postID);
+	} catch (NumberFormatException e) {
+	    throw new NumberFormatException();
+	} catch (EmptyInputException e) {
+	    throw new EmptyInputException();
+	} catch (InvalidNegativeIntegerException e) {
+	    throw new InvalidNegativeIntegerException();
+	}
+
+	return post;
     }
 
     /**
@@ -255,7 +378,7 @@ public class DashboardController {
 	} catch (EmptyInputException inputEmptyError) {
 	    throw new EmptyInputException();
 	} catch (NumberFormatException numberFormatError) {
-	    throw new NumberFormatException();
+	    throw new NumberFormatException(input);
 	} catch (InvalidNegativeIntegerException integerNegativeError) {
 	    throw new InvalidNegativeIntegerException();
 	}
