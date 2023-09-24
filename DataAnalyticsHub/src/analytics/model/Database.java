@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 
 import analytics.ExistedPostIDException;
 import analytics.UserVerificationFailException;
@@ -114,20 +115,23 @@ public class Database {
 	usersDatabase.remove(outdatedUser.getUsername());
 	usersDatabase.put(updatedUser.getUsername(), updatedUser);
 
-	// FIXTHIS: Update post author
-
 	try (Connection con = getConnection(); Statement statement = con.createStatement();) {
-	    String query = String.format(
+
+	    String updateUserProfileQuery = String.format(
 		    "UPDATE Users SET USERNAME = '%s', PASSWORD = '%s', FIRSTNAME = '%s', LASTNAME = '%s' WHERE USERNAME = '%s';",
 		    updatedUser.getUsername(), updatedUser.getPassword(), updatedUser.getFirstName(),
 		    updatedUser.getLastName(), outdatedUser.getUsername());
 
-	    int result = statement.executeUpdate(query);
+	    String updateUserPostQuery = String.format("UPDATE Posts SET AUTHOR = '%s' WHERE AUTHOR = '%s';",
+		    updatedUser.getUsername(), outdatedUser.getUsername());
 
-	    if (result == 1) {
+	    int result1 = statement.executeUpdate(updateUserProfileQuery);
+	    int result2 = statement.executeUpdate(updateUserPostQuery);
+
+	    if (result2 == 1) {
 		System.out.println("User profile edited successfully");
-		System.out.println(result + " row(s) affected");
-		System.out.println(query);
+		System.out.println(result2 + " row(s) affected");
+		System.out.println(result2);
 	    }
 	} catch (SQLException e) {
 	    System.out.println(e.getMessage());
@@ -195,6 +199,24 @@ public class Database {
 	    System.out.println(e.getMessage());
 	}
 
+    }
+
+    public PriorityQueue<Post> retrieveTopNLikesPost(String author) {
+	PriorityQueue<Post> topNLikesPost = new PriorityQueue<Post>(new PostComparator());
+
+	if (author != "All Users") {
+	    postsDatabase.forEach((postId, postObject) -> {
+		System.out.println(postObject.getAuthor());
+		if (postObject.getAuthor() == author) {
+		    System.out.println("found");
+		    topNLikesPost.add(postObject);
+		}
+	    });
+	} else {
+	    postsDatabase.forEach((postId, postObject) ->  topNLikesPost.add(postObject));
+	}
+	
+	return topNLikesPost;
     }
 
     /**

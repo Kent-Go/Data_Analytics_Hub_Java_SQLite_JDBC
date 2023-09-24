@@ -48,13 +48,6 @@ public class Post {
     }
 
     /**
-     * The method to represent the Post object in String format
-     */
-    public String toString() {
-	return id + " | " + content + " | " + author + " | " + likes + " | " + shares + " | " + dateTime;
-    }
-
-    /**
      * The getter method to access Post's ID
      */
     public int getId() {

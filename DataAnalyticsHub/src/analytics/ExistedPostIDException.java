@@ -1,5 +1,4 @@
-/*
-
+/**
  * ExistedPostIDException.java
  * 
  * Version: 1.0

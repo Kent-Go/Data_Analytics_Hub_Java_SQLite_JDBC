@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 
 import analytics.EmptyInputException;
@@ -18,7 +19,10 @@ import analytics.model.Post;
 import analytics.model.User;
 import analytics.view.EditProfileViewer;
 import analytics.view.LoginViewer;
+import analytics.InvalidNonPositiveIntegerException;
 import analytics.InvalidContentException;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -27,6 +31,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
@@ -80,6 +85,27 @@ public class DashboardController {
     @FXML
     private TextField removePostIDInputField;
 
+    @FXML
+    private TextField retrieveTopNLikesPostNumberInputField;
+
+    @FXML
+    private ChoiceBox<String> retrieveTopNLikesPostAuthorChoiceBox;
+
+    @FXML
+    private TableView<Post> retrieveTopNLikesPostTableView;
+    @FXML
+    private TableColumn<Post, Integer> retrieveTopNLikesPostIDColumn;
+    @FXML
+    private TableColumn<Post, String> retrieveTopNLikesPostContentColumn;
+    @FXML
+    private TableColumn<Post, String> retrieveTopNLikesPostAuthorColumn;
+    @FXML
+    private TableColumn<Post, Integer> retrieveTopNLikesPostLikesColumn;
+    @FXML
+    private TableColumn<Post, Integer> retrieveTopNLikesPostSharesColumn;
+    @FXML
+    private TableColumn<Post, String> retrieveTopNLikesPostDateTimeColumn;
+
     public DashboardController() {
 	dataBase = new Database();
     }
@@ -91,6 +117,9 @@ public class DashboardController {
     public void initaliseUser(User loginUser) {
 	this.loginUser = loginUser;
 	addPostAuthorLabelField.setText(this.loginUser.getUsername());
+
+	ObservableList<String> authorList = FXCollections.observableArrayList(loginUser.getUsername(), "All Users");
+	retrieveTopNLikesPostAuthorChoiceBox.setItems(authorList);
     }
 
     public void displayWelcomeMessage() {
@@ -165,7 +194,6 @@ public class DashboardController {
 	    addPostSuccess.showAndWait();
 
 	    addPostIDInputField.setText("");
-	    addPostAuthorLabelField.setText(""); // post author
 	    addPostLikesInputField.setText("");
 	    addPostSharesInputField.setText("");
 	    addPostContentInputField.setText("");
@@ -241,7 +269,7 @@ public class DashboardController {
 	    numberFormatErrorAlert.show();
 	} catch (InvalidNegativeIntegerException integerNegativeError) {
 	    Alert integerNegativeErrorAlert = new Alert(AlertType.ERROR);
-	    integerNegativeErrorAlert.setHeaderText("Add Post Failed");
+	    integerNegativeErrorAlert.setHeaderText("Retreive Post Failed");
 	    integerNegativeErrorAlert.setContentText(integerNegativeError.getMessage());
 	    integerNegativeErrorAlert.show();
 	}
@@ -282,6 +310,60 @@ public class DashboardController {
 	    integerNegativeErrorAlert.setHeaderText("Remove Post Failed");
 	    integerNegativeErrorAlert.setContentText(integerNegativeError.getMessage());
 	    integerNegativeErrorAlert.show();
+	}
+    }
+
+    @FXML
+    public void retrieveTopNLikesPostHandler(ActionEvent event) {
+	try {
+	    retrieveTopNLikesPostTableView.getItems().clear();
+
+	    String strNumberPost = retrieveTopNLikesPostNumberInputField.getText();
+	    String selectedauthor = retrieveTopNLikesPostAuthorChoiceBox.getValue();
+
+	    int intNumberPost = readInputPositiveInt(strNumberPost);
+
+	    if (selectedauthor != null) {
+		PriorityQueue<Post> topNLikesPost = dataBase.retrieveTopNLikesPost(selectedauthor);
+		
+		int i = 0;
+		while (!topNLikesPost.isEmpty()) {
+		    retrievePostTableView.getItems().add((Post) topNLikesPost.poll());
+		    System.out.println("work");
+	        }
+		retrieveTopNLikesPostIDColumn.setCellValueFactory(new PropertyValueFactory<Post, Integer>("id"));
+		retrieveTopNLikesPostContentColumn
+			.setCellValueFactory(new PropertyValueFactory<Post, String>("content"));
+		retrieveTopNLikesPostAuthorColumn.setCellValueFactory(new PropertyValueFactory<Post, String>("author"));
+		retrieveTopNLikesPostLikesColumn.setCellValueFactory(new PropertyValueFactory<Post, Integer>("likes"));
+		retrieveTopNLikesPostSharesColumn
+			.setCellValueFactory(new PropertyValueFactory<Post, Integer>("shares"));
+		retrieveTopNLikesPostDateTimeColumn
+			.setCellValueFactory(new PropertyValueFactory<Post, String>("dateTime"));
+		
+		retrieveTopNLikesPostNumberInputField.setText("");
+		retrieveTopNLikesPostAuthorChoiceBox.setValue("");
+	    } else {
+		Alert selectedAuthorChoiceEmptyErrorAlert = new Alert(AlertType.ERROR);
+		selectedAuthorChoiceEmptyErrorAlert.setHeaderText("Retreive Top N Likes Post Failed");
+		selectedAuthorChoiceEmptyErrorAlert.setContentText("Please select an author!");
+		selectedAuthorChoiceEmptyErrorAlert.show();
+	    }
+	} catch (EmptyInputException inputEmptyError) {
+	    Alert inputEmptyErrorAlert = new Alert(AlertType.ERROR);
+	    inputEmptyErrorAlert.setHeaderText("Retreive Top N Likes Post Failed");
+	    inputEmptyErrorAlert.setContentText(inputEmptyError.getMessage());
+	    inputEmptyErrorAlert.show();
+	} catch (NumberFormatException numberFormatError) {
+	    Alert numberFormatErrorAlert = new Alert(AlertType.ERROR);
+	    numberFormatErrorAlert.setHeaderText("Retreive Top N Likes Post Failed");
+	    numberFormatErrorAlert.setContentText("Input must be an integer value.");
+	    numberFormatErrorAlert.show();
+	} catch (InvalidNonPositiveIntegerException integerNonPositiveError) {
+	    Alert integerNonPositiveErrorAlert = new Alert(AlertType.ERROR);
+	    integerNonPositiveErrorAlert.setHeaderText("Retreive Top N Likes Post Failed");
+	    integerNonPositiveErrorAlert.setContentText(integerNonPositiveError.getMessage());
+	    integerNonPositiveErrorAlert.show();
 	}
     }
 
@@ -378,12 +460,42 @@ public class DashboardController {
 	} catch (EmptyInputException inputEmptyError) {
 	    throw new EmptyInputException();
 	} catch (NumberFormatException numberFormatError) {
-	    throw new NumberFormatException(input);
+	    throw new NumberFormatException();
 	} catch (InvalidNegativeIntegerException integerNegativeError) {
 	    throw new InvalidNegativeIntegerException();
 	}
 
 	return intInput;
+    }
+
+    private int readInputPositiveInt(String input) throws EmptyInputException, NumberFormatException, InvalidNonPositiveIntegerException {
+	int intInput = 0;
+	try {
+	    input = input.trim();
+	    checkInputEmpty(input);
+	    intInput = Integer.parseInt(input);
+	    checkPositiveIntegerFormat(intInput);
+	} catch (EmptyInputException inputEmptyError) {
+	    throw new EmptyInputException();
+	} catch (NumberFormatException numberFormatError) {
+	    throw new NumberFormatException();
+	}  catch (InvalidNonPositiveIntegerException integerNonPositiveError) {
+	    throw new InvalidNonPositiveIntegerException();
+	}
+
+	return intInput;
+    }
+    
+    /**
+     * The method to check if integer is negative or zero to throw user-defined
+     * InvalidNegativeIntegerException
+     * 
+     * @param integer The integer to be validate
+     */
+    private void checkPositiveIntegerFormat(int integer) throws InvalidNonPositiveIntegerException {
+	if (integer <= 0) {
+	    throw new InvalidNonPositiveIntegerException();
+	}
     }
 
     /**

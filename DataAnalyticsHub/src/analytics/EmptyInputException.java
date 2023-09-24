@@ -1,16 +1,3 @@
-/*
-
- * EmptyInputException.java
- * 
- * Version: 1.0
- *
- * Date: 31/07/2023
- * 
- * © 2023 Go Chee Kin.
- * 
- * All rights reserved.
- */
-
 package analytics;
 
 /**
