@@ -90,10 +90,10 @@ public class DashboardController {
 
     @FXML
     private ChoiceBox<String> retrieveTopNLikesPostAuthorChoiceBox;
-    
+
     @FXML
     private Label NumPostExceedDatabaseLabel;
-    
+
     @FXML
     private Label TopNLikesPostLabel;
 
@@ -334,19 +334,26 @@ public class DashboardController {
 
 	    if (selectedAuthor != null) {
 		PriorityQueue<Post> topNLikesPost = dataBase.retrieveTopNLikesPost(selectedAuthor);
-		
-		if (topNLikesPost.size() < intNumberPost) {
-		    intNumberPost = topNLikesPost.size();
-		    NumPostExceedDatabaseLabel.setText(String.format("Only %d posts exist in the database for %s. Showing all of them.", intNumberPost, selectedAuthor));
+
+		if (topNLikesPost.size() == 0) {
+		    NumPostExceedDatabaseLabel
+			    .setText(String.format("0 post exist in the database for %s.", selectedAuthor));
+		} else {
+		    if (topNLikesPost.size() < intNumberPost) {
+			intNumberPost = topNLikesPost.size();
+			NumPostExceedDatabaseLabel.setText(
+				String.format("Only %d posts exist in the database for %s. Showing all of them.",
+					intNumberPost, selectedAuthor));
+		    }
+		    TopNLikesPostLabel
+			    .setText(String.format("The top-%d posts with the most likes are:", intNumberPost));
 		}
-		
-		 TopNLikesPostLabel.setText(String.format("The top-%d posts with the most likes are:", intNumberPost));
-		 
+
 		int i = 0;
 		while ((!topNLikesPost.isEmpty()) && (i < intNumberPost)) {
 		    retrieveTopNLikesPostTableView.getItems().add(topNLikesPost.poll());
 		    i++;
-	        }
+		}
 		retrieveTopNLikesPostIDColumn.setCellValueFactory(new PropertyValueFactory<Post, Integer>("id"));
 		retrieveTopNLikesPostContentColumn
 			.setCellValueFactory(new PropertyValueFactory<Post, String>("content"));
@@ -356,10 +363,10 @@ public class DashboardController {
 			.setCellValueFactory(new PropertyValueFactory<Post, Integer>("shares"));
 		retrieveTopNLikesPostDateTimeColumn
 			.setCellValueFactory(new PropertyValueFactory<Post, String>("dateTime"));
-		
+
 		retrieveTopNLikesPostNumberInputField.setText("");
 		retrieveTopNLikesPostAuthorChoiceBox.setValue(null);
-				    
+
 		;
 	    } else {
 		Alert selectedAuthorChoiceEmptyErrorAlert = new Alert(AlertType.ERROR);
@@ -486,7 +493,8 @@ public class DashboardController {
 	return intInput;
     }
 
-    private int readInputPositiveInt(String input) throws EmptyInputException, NumberFormatException, InvalidNonPositiveIntegerException {
+    private int readInputPositiveInt(String input)
+	    throws EmptyInputException, NumberFormatException, InvalidNonPositiveIntegerException {
 	int intInput = 0;
 	try {
 	    input = input.trim();
@@ -497,13 +505,13 @@ public class DashboardController {
 	    throw new EmptyInputException();
 	} catch (NumberFormatException numberFormatError) {
 	    throw new NumberFormatException();
-	}  catch (InvalidNonPositiveIntegerException integerNonPositiveError) {
+	} catch (InvalidNonPositiveIntegerException integerNonPositiveError) {
 	    throw new InvalidNonPositiveIntegerException();
 	}
 
 	return intInput;
     }
-    
+
     /**
      * The method to check if integer is negative or zero to throw user-defined
      * InvalidNegativeIntegerException
