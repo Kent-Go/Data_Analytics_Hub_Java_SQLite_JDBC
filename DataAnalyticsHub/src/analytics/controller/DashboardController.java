@@ -90,6 +90,12 @@ public class DashboardController {
 
     @FXML
     private ChoiceBox<String> retrieveTopNLikesPostAuthorChoiceBox;
+    
+    @FXML
+    private Label NumPostExceedDatabaseLabel;
+    
+    @FXML
+    private Label TopNLikesPostLabel;
 
     @FXML
     private TableView<Post> retrieveTopNLikesPostTableView;
@@ -318,6 +324,8 @@ public class DashboardController {
     public void retrieveTopNLikesPostHandler(ActionEvent event) {
 	try {
 	    retrieveTopNLikesPostTableView.getItems().clear();
+	    NumPostExceedDatabaseLabel.setText("");
+	    TopNLikesPostLabel.setText("");
 
 	    String strNumberPost = retrieveTopNLikesPostNumberInputField.getText();
 	    String selectedAuthor = retrieveTopNLikesPostAuthorChoiceBox.getValue();
@@ -326,6 +334,14 @@ public class DashboardController {
 
 	    if (selectedAuthor != null) {
 		PriorityQueue<Post> topNLikesPost = dataBase.retrieveTopNLikesPost(selectedAuthor);
+		
+		if (topNLikesPost.size() < intNumberPost) {
+		    intNumberPost = topNLikesPost.size();
+		    NumPostExceedDatabaseLabel.setText(String.format("Only %d posts exist in the database for %s. Showing all of them.", intNumberPost, selectedAuthor));
+		}
+		
+		 TopNLikesPostLabel.setText(String.format("The top-%d posts with the most likes are:", intNumberPost));
+		 
 		int i = 0;
 		while ((!topNLikesPost.isEmpty()) && (i < intNumberPost)) {
 		    retrieveTopNLikesPostTableView.getItems().add(topNLikesPost.poll());
@@ -343,6 +359,8 @@ public class DashboardController {
 		
 		retrieveTopNLikesPostNumberInputField.setText("");
 		retrieveTopNLikesPostAuthorChoiceBox.setValue(null);
+				    
+		;
 	    } else {
 		Alert selectedAuthorChoiceEmptyErrorAlert = new Alert(AlertType.ERROR);
 		selectedAuthorChoiceEmptyErrorAlert.setHeaderText("Retreive Top N Likes Post Failed");
