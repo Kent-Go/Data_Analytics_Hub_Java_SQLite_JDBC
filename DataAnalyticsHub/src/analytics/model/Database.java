@@ -11,6 +11,8 @@ import java.util.PriorityQueue;
 import analytics.ExistedPostIDException;
 import analytics.UserVerificationFailException;
 import analytics.UsernameExistedException;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class Database {
     private static final String DB_URL = "jdbc:sqlite:DataAnalyticsHub.db";
@@ -67,6 +69,23 @@ public class Database {
 	} catch (SQLException e) {
 	    System.out.println(e.getMessage());
 	}
+    }
+    
+    public ObservableList<String> retreieveAllUsersName() {
+	ObservableList<String> authorList = FXCollections.observableArrayList();
+
+	try (Connection con = getConnection(); Statement statement = con.createStatement();) {
+	    String query = "SELECT DISTINCT USERNAME FROM Users";
+
+	    try (ResultSet resultSetAllUsers = statement.executeQuery(query)) {
+		while (resultSetAllUsers.next()) {
+		    authorList.add(resultSetAllUsers.getString("USERNAME"));
+		}
+	    }
+	} catch (SQLException e) {
+	    System.out.println(e.getMessage());
+	}
+	return authorList;
     }
 
     public User retrieveUser(String username) {

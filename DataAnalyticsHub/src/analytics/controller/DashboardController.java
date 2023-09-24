@@ -118,7 +118,8 @@ public class DashboardController {
 	this.loginUser = loginUser;
 	addPostAuthorLabelField.setText(this.loginUser.getUsername());
 
-	ObservableList<String> authorList = FXCollections.observableArrayList(loginUser.getUsername(), "All Users");
+	ObservableList<String> authorList = dataBase.retreieveAllUsersName();
+	authorList.add("All Users");
 	retrieveTopNLikesPostAuthorChoiceBox.setItems(authorList);
     }
 
