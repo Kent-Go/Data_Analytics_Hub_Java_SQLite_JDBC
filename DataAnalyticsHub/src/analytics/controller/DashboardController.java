@@ -319,17 +319,16 @@ public class DashboardController {
 	    retrieveTopNLikesPostTableView.getItems().clear();
 
 	    String strNumberPost = retrieveTopNLikesPostNumberInputField.getText();
-	    String selectedauthor = retrieveTopNLikesPostAuthorChoiceBox.getValue();
+	    String selectedAuthor = retrieveTopNLikesPostAuthorChoiceBox.getValue();
 
 	    int intNumberPost = readInputPositiveInt(strNumberPost);
 
-	    if (selectedauthor != null) {
-		PriorityQueue<Post> topNLikesPost = dataBase.retrieveTopNLikesPost(selectedauthor);
-		
+	    if (selectedAuthor != null) {
+		PriorityQueue<Post> topNLikesPost = dataBase.retrieveTopNLikesPost(selectedAuthor);
 		int i = 0;
-		while (!topNLikesPost.isEmpty()) {
-		    retrievePostTableView.getItems().add((Post) topNLikesPost.poll());
-		    System.out.println("work");
+		while ((!topNLikesPost.isEmpty()) && (i < intNumberPost)) {
+		    retrieveTopNLikesPostTableView.getItems().add(topNLikesPost.poll());
+		    i++;
 	        }
 		retrieveTopNLikesPostIDColumn.setCellValueFactory(new PropertyValueFactory<Post, Integer>("id"));
 		retrieveTopNLikesPostContentColumn
@@ -342,7 +341,7 @@ public class DashboardController {
 			.setCellValueFactory(new PropertyValueFactory<Post, String>("dateTime"));
 		
 		retrieveTopNLikesPostNumberInputField.setText("");
-		retrieveTopNLikesPostAuthorChoiceBox.setValue("");
+		retrieveTopNLikesPostAuthorChoiceBox.setValue(null);
 	    } else {
 		Alert selectedAuthorChoiceEmptyErrorAlert = new Alert(AlertType.ERROR);
 		selectedAuthorChoiceEmptyErrorAlert.setHeaderText("Retreive Top N Likes Post Failed");

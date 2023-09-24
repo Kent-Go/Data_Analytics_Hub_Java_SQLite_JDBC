@@ -204,11 +204,9 @@ public class Database {
     public PriorityQueue<Post> retrieveTopNLikesPost(String author) {
 	PriorityQueue<Post> topNLikesPost = new PriorityQueue<Post>(new PostComparator());
 
-	if (author != "All Users") {
+	if (!author.equals("All Users")) {
 	    postsDatabase.forEach((postId, postObject) -> {
-		System.out.println(postObject.getAuthor());
-		if (postObject.getAuthor() == author) {
-		    System.out.println("found");
+		if (postObject.getAuthor().equals(author)) {
 		    topNLikesPost.add(postObject);
 		}
 	    });
