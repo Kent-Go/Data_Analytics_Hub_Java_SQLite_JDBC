@@ -1,7 +1,10 @@
 package analytics.controller;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,7 +36,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class DashboardController {
 
@@ -111,6 +117,9 @@ public class DashboardController {
     private TableColumn<Post, Integer> retrieveTopNLikesPostSharesColumn;
     @FXML
     private TableColumn<Post, String> retrieveTopNLikesPostDateTimeColumn;
+
+    @FXML
+    private TextField exportPostIDInputField;
 
     public DashboardController() {
 	dataBase = new Database();
@@ -389,6 +398,61 @@ public class DashboardController {
 	    integerNonPositiveErrorAlert.setHeaderText("Retreive Top N Likes Post Failed");
 	    integerNonPositiveErrorAlert.setContentText(integerNonPositiveError.getMessage());
 	    integerNonPositiveErrorAlert.show();
+	}
+    }
+
+    @FXML
+    public void exportPostHandler(ActionEvent event) {
+	try {
+	    String id = exportPostIDInputField.getText();
+
+	    Post post = readInputRetrievePostID(id);
+
+	    if (post != null) {
+		try {
+		    FileChooser fileChooser = new FileChooser();
+		    ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV file (*.csv)", "*.csv");
+		    fileChooser.getExtensionFilters().add(extFilter);
+
+		    File selectedFile = fileChooser.showSaveDialog(primaryStage);
+		    if (selectedFile != null) {
+			PrintWriter fileOutput = new PrintWriter(selectedFile);
+			fileOutput.println("ID,content,author,likes,shares,date-time");
+			fileOutput.printf("%d,%s,%s,%d,%d,%s", post.getId(), post.getContent(), post.getAuthor(),
+				post.getLikes(), post.getShares(), post.getDateTime());
+			fileOutput.close();
+
+			Alert exportPostSuccess = new Alert(AlertType.INFORMATION);
+			exportPostSuccess.setHeaderText("Export Post Success");
+			exportPostSuccess.setContentText("The post is successfully exported into .csv file!");
+			exportPostSuccess.showAndWait();
+			exportPostIDInputField.setText("");
+		    }
+
+		} catch (FileNotFoundException e) {
+		    e.printStackTrace();
+		}
+	    } else {
+		Alert postNotExistAlert = new Alert(AlertType.ERROR);
+		postNotExistAlert.setHeaderText("Export Post Failed");
+		postNotExistAlert.setContentText("Sorry the post does not exist in the database!");
+		postNotExistAlert.show();
+	    }
+	} catch (EmptyInputException inputEmptyError) {
+	    Alert inputEmptyErrorAlert = new Alert(AlertType.ERROR);
+	    inputEmptyErrorAlert.setHeaderText("Export Post Failed");
+	    inputEmptyErrorAlert.setContentText(inputEmptyError.getMessage());
+	    inputEmptyErrorAlert.show();
+	} catch (NumberFormatException numberFormatError) {
+	    Alert numberFormatErrorAlert = new Alert(AlertType.ERROR);
+	    numberFormatErrorAlert.setHeaderText("Export Post Failed");
+	    numberFormatErrorAlert.setContentText("Input must be an integer value.");
+	    numberFormatErrorAlert.show();
+	} catch (InvalidNegativeIntegerException integerNegativeError) {
+	    Alert integerNegativeErrorAlert = new Alert(AlertType.ERROR);
+	    integerNegativeErrorAlert.setHeaderText("Export Post Failed");
+	    integerNegativeErrorAlert.setContentText(integerNegativeError.getMessage());
+	    integerNegativeErrorAlert.show();
 	}
     }
 

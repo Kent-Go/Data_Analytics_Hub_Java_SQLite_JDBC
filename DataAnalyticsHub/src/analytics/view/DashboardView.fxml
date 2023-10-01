@@ -114,6 +114,17 @@
                   </AnchorPane>
               </content>
             </Tab>
+            <Tab text="Export Post">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Label layoutX="7.0" layoutY="9.0" text="Post ID:" />
+                        <TextField fx:id="exportPostIDInputField" layoutX="54.0" layoutY="5.0" prefHeight="25.0" prefWidth="54.0" />
+                        <Button layoutX="121.0" layoutY="5.0" mnemonicParsing="false" onAction="#exportPostHandler" text="Export to .csv" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
         </tabs>
       </TabPane>
    </children>
