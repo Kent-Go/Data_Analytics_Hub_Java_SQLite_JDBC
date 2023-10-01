@@ -25,6 +25,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -119,6 +121,15 @@ public class DashboardController {
 
     @FXML
     private Button upgradeToVipButton;
+    
+    @FXML
+    private TabPane dashboardTabPane;
+    
+    @FXML
+    private Tab dataVisualizationTab;
+    
+    @FXML
+    private Tab bulkImportPostTab;
 
     public DashboardController() {
 	dataBase = new Database();
@@ -138,6 +149,10 @@ public class DashboardController {
 
 	if (this.loginUser.getVip() == 1) {
 	    upgradeToVipButton.setVisible(false);
+	}
+	else {
+	    dashboardTabPane.getTabs().remove(dataVisualizationTab);
+	    dashboardTabPane.getTabs().remove(bulkImportPostTab);
 	}
     }
 

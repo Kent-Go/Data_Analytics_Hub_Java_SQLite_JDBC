@@ -25,9 +25,9 @@
          </font>
       </Label>
       <Button layoutX="14.0" layoutY="57.0" mnemonicParsing="false" onAction="#redirectEditProfilePageHandler" text="Edit Profile" />
-      <Button fx:id="upgradeToVipButton" layoutX="428.0" layoutY="32.0" mnemonicParsing="false" onAction="#upgradeToVipHandler" text="Upgrade to VIP" />
+      <Button fx:id="upgradeToVipButton" layoutX="428.0" layoutY="32.0" mnemonicParsing="false" onAction="#upgradeToVipHandler" style="-fx-background-color: gold;" text="Upgrade to VIP" />
       <Button layoutX="534.0" layoutY="32.0" mnemonicParsing="false" onAction="#logOutUserHandler" text="Logout" />
-      <TabPane layoutX="12.0" layoutY="92.0" prefHeight="296.0" prefWidth="577.0" style="-fx-border-color: black;" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="dashboardTabPane" layoutX="12.0" layoutY="92.0" prefHeight="296.0" prefWidth="577.0" style="-fx-border-color: black;" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Add New Post">
             <content>
@@ -124,6 +124,16 @@
                         <Button layoutX="121.0" layoutY="5.0" mnemonicParsing="false" onAction="#exportPostHandler" text="Export to .csv" />
                      </children>
                   </AnchorPane>
+              </content>
+            </Tab>
+            <Tab fx:id="dataVisualizationTab" text="Data Visualization">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
+            <Tab fx:id="bulkImportPostTab" text="Bulk Import Post">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
               </content>
             </Tab>
         </tabs>
