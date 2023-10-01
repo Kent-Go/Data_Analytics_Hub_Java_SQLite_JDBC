@@ -416,11 +416,11 @@ public class DashboardController {
 
 		    File selectedFile = fileChooser.showSaveDialog(primaryStage);
 		    if (selectedFile != null) {
-			PrintWriter fileOutput = new PrintWriter(selectedFile);
-			fileOutput.println("ID,content,author,likes,shares,date-time");
-			fileOutput.printf("%d,%s,%s,%d,%d,%s", post.getId(), post.getContent(), post.getAuthor(),
+			PrintWriter printWriter = new PrintWriter(selectedFile);
+			printWriter.println("ID,content,author,likes,shares,date-time");
+			printWriter.printf("%d,%s,%s,%d,%d,%s", post.getId(), post.getContent(), post.getAuthor(),
 				post.getLikes(), post.getShares(), post.getDateTime());
-			fileOutput.close();
+			printWriter.close();
 
 			Alert exportPostSuccess = new Alert(AlertType.INFORMATION);
 			exportPostSuccess.setHeaderText("Export Post Success");
@@ -428,9 +428,11 @@ public class DashboardController {
 			exportPostSuccess.showAndWait();
 			exportPostIDInputField.setText("");
 		    }
-
-		} catch (FileNotFoundException e) {
-		    e.printStackTrace();
+		} catch (FileNotFoundException fileNotFoundError) {
+		    Alert fileNotFoundErrorAlert = new Alert(AlertType.ERROR);
+		    fileNotFoundErrorAlert.setHeaderText("Export Post Failed");
+		    fileNotFoundErrorAlert.setContentText("The file path is not found!");
+		    fileNotFoundErrorAlert.show();
 		}
 	    } else {
 		Alert postNotExistAlert = new Alert(AlertType.ERROR);
