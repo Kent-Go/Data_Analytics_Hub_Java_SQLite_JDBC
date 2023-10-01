@@ -400,12 +400,12 @@ public class DashboardController {
 	    input = input.trim();
 	    postID = readInputNonNegativeInt(input);
 	    post = dataBase.retrievePost(postID);
-	} catch (NumberFormatException e) {
-	    throw new NumberFormatException();
-	} catch (EmptyInputException e) {
-	    throw new EmptyInputException();
-	} catch (InvalidNegativeIntegerException e) {
-	    throw new InvalidNegativeIntegerException();
+	} catch (EmptyInputException inputEmptyError) {
+	    throw inputEmptyError;
+	} catch (NumberFormatException numberFormatError) {
+	    throw numberFormatError;
+	} catch (InvalidNegativeIntegerException integerNegativeError) {
+	    throw integerNegativeError;
 	}
 
 	return post;
@@ -429,14 +429,14 @@ public class DashboardController {
 	    input = input.trim();
 	    postID = readInputNonNegativeInt(input);
 	    dataBase.checkPostIDExist(postID);
-	} catch (NumberFormatException e) {
-	    throw new NumberFormatException();
-	} catch (EmptyInputException e) {
-	    throw new EmptyInputException();
-	} catch (InvalidNegativeIntegerException e) {
-	    throw new InvalidNegativeIntegerException();
+	} catch (EmptyInputException inputEmptyError) {
+	    throw inputEmptyError;
+	} catch (NumberFormatException numberFormatError) {
+	    throw numberFormatError;
+	} catch (InvalidNegativeIntegerException integerNegativeError) {
+	    throw integerNegativeError;
 	} catch (ExistedPostIDException postIDExisted) {
-	    throw new ExistedPostIDException(postID);
+	    throw postIDExisted;
 	}
 
 	return postID;
@@ -458,7 +458,7 @@ public class DashboardController {
 	    checkInputEmpty(input);
 	    checkContentFormat(input);
 	} catch (EmptyInputException inputEmptyError) {
-	    throw new EmptyInputException();
+	    throw inputEmptyError;
 	} catch (InvalidContentException contentFormatError) {
 	    throw new InvalidContentException();
 	}
@@ -483,11 +483,11 @@ public class DashboardController {
 	    intInput = Integer.parseInt(input);
 	    checkNonNegativeIntegerFormat(intInput);
 	} catch (EmptyInputException inputEmptyError) {
-	    throw new EmptyInputException();
+	    throw inputEmptyError;
 	} catch (NumberFormatException numberFormatError) {
 	    throw new NumberFormatException();
 	} catch (InvalidNegativeIntegerException integerNegativeError) {
-	    throw new InvalidNegativeIntegerException();
+	    throw integerNegativeError;
 	}
 
 	return intInput;
@@ -502,26 +502,14 @@ public class DashboardController {
 	    intInput = Integer.parseInt(input);
 	    checkPositiveIntegerFormat(intInput);
 	} catch (EmptyInputException inputEmptyError) {
-	    throw new EmptyInputException();
+	    throw inputEmptyError;
 	} catch (NumberFormatException numberFormatError) {
 	    throw new NumberFormatException();
 	} catch (InvalidNonPositiveIntegerException integerNonPositiveError) {
-	    throw new InvalidNonPositiveIntegerException();
+	    throw integerNonPositiveError;
 	}
 
 	return intInput;
-    }
-
-    /**
-     * The method to check if integer is negative or zero to throw user-defined
-     * InvalidNegativeIntegerException
-     * 
-     * @param integer The integer to be validate
-     */
-    private void checkPositiveIntegerFormat(int integer) throws InvalidNonPositiveIntegerException {
-	if (integer <= 0) {
-	    throw new InvalidNonPositiveIntegerException();
-	}
     }
 
     /**
@@ -544,7 +532,7 @@ public class DashboardController {
 	    Date date = dateFormat.parse(input);
 	    input = dateFormat.format(date);
 	} catch (EmptyInputException inputEmptyError) {
-	    throw new EmptyInputException();
+	    throw inputEmptyError;
 	} catch (ParseException parseError) {
 	    throw new ParseException(input, 0);
 	}
@@ -583,7 +571,19 @@ public class DashboardController {
      */
     private void checkNonNegativeIntegerFormat(int integer) throws InvalidNegativeIntegerException {
 	if (integer < 0) {
-	    throw new InvalidNegativeIntegerException();
+	    throw new InvalidNegativeIntegerException(integer);
+	}
+    }
+
+    /**
+     * The method to check if integer is negative or zero to throw user-defined
+     * InvalidNegativeIntegerException
+     * 
+     * @param integer The integer to be validate
+     */
+    private void checkPositiveIntegerFormat(int integer) throws InvalidNonPositiveIntegerException {
+	if (integer <= 0) {
+	    throw new InvalidNonPositiveIntegerException(integer);
 	}
     }
 }

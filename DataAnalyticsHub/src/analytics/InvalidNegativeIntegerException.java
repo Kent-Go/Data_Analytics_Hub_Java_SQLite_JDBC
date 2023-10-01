@@ -19,7 +19,7 @@ package analytics;
  * negative integer.
  */
 public class InvalidNegativeIntegerException extends Exception {
-    public InvalidNegativeIntegerException() {
-	super("Invalid response. Integer cannot be negative. Please try again!");
+    public InvalidNegativeIntegerException(int integer) {
+	super(String.format("Invalid response. %d is negative. Response cannot be negative. Please try again!", integer));
     }
 }
