@@ -3,17 +3,13 @@ package analytics.controller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.PriorityQueue;
-import java.util.Scanner;
 
 import analytics.EmptyInputException;
-import analytics.InvalidPasswordLengthException;
-import analytics.UsernameExistedException;
 import analytics.ExistedPostIDException;
 import analytics.InvalidNegativeIntegerException;
 
@@ -24,7 +20,6 @@ import analytics.view.EditProfileViewer;
 import analytics.view.LoginViewer;
 import analytics.InvalidNonPositiveIntegerException;
 import analytics.InvalidContentException;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,9 +29,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -121,6 +117,9 @@ public class DashboardController {
     @FXML
     private TextField exportPostIDInputField;
 
+    @FXML
+    private Button upgradeToVipButton;
+
     public DashboardController() {
 	dataBase = new Database();
     }
@@ -136,6 +135,10 @@ public class DashboardController {
 	ObservableList<String> authorList = dataBase.retreieveAllUsersName();
 	authorList.add("All Users");
 	retrieveTopNLikesPostAuthorChoiceBox.setItems(authorList);
+
+	if (this.loginUser.getVip() == 1) {
+	    upgradeToVipButton.setVisible(false);
+	}
     }
 
     public void displayWelcomeMessage() {
@@ -156,6 +159,25 @@ public class DashboardController {
 	    fileLoadingErrorAlert.setContentText("EditProfileView.fxml file path is not found");
 	    fileLoadingErrorAlert.show();
 	}
+    }
+
+    @FXML
+    public void upgradeToVipHandler(ActionEvent event) {
+	Alert upgradeVipConfirnmationAlert = new Alert(AlertType.CONFIRMATION);
+	upgradeVipConfirnmationAlert.setHeaderText("Upgrade To VIP");
+	upgradeVipConfirnmationAlert
+		.setContentText("Would you like to subscribe to the application for a monthly fee of $0?");
+	upgradeVipConfirnmationAlert.showAndWait().ifPresent(buttonClicked -> {
+	    if (buttonClicked == ButtonType.OK) {
+		dataBase.upgradeUserToVip(loginUser);
+
+		Alert upgradeVIPSuccessAlert = new Alert(AlertType.INFORMATION);
+		upgradeVIPSuccessAlert.setHeaderText("You are now upgraded to VIP.");
+		upgradeVIPSuccessAlert.setContentText("Please log out and log in again to access VIP functionalities.");
+		upgradeVIPSuccessAlert.showAndWait();
+		redirectLoginPage(event);
+	    }
+	});
     }
 
     @FXML

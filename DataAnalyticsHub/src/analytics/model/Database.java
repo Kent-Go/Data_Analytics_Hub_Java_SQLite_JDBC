@@ -70,7 +70,7 @@ public class Database {
 	    System.out.println(e.getMessage());
 	}
     }
-    
+
     public ObservableList<String> retreieveAllUsersName() {
 	ObservableList<String> authorList = FXCollections.observableArrayList();
 
@@ -159,6 +159,25 @@ public class Database {
 	retreieveAllPosts();
     }
 
+    public void upgradeUserToVip(User loginUser) {
+	usersDatabase.get(loginUser.getUsername()).setVip(1);
+
+	try (Connection con = getConnection(); Statement statement = con.createStatement();) {
+
+	    String updateUserVipQuery = String.format("UPDATE Users SET VIP = '1' WHERE USERNAME = '%s';",
+		    loginUser.getUsername());
+
+
+	    int result = statement.executeUpdate(updateUserVipQuery);
+
+	    if (result == 1) {
+		System.out.println("User Vip upgrade successfully");
+	    }
+	} catch (SQLException e) {
+	    System.out.println(e.getMessage());
+	}
+    }
+
     public void retreieveAllPosts() {
 	postsDatabase.clear();
 	try (Connection con = getConnection(); Statement statement = con.createStatement();) {
@@ -230,9 +249,9 @@ public class Database {
 		}
 	    });
 	} else {
-	    postsDatabase.forEach((postId, postObject) ->  topNLikesPost.add(postObject));
+	    postsDatabase.forEach((postId, postObject) -> topNLikesPost.add(postObject));
 	}
-	
+
 	return topNLikesPost;
     }
 
