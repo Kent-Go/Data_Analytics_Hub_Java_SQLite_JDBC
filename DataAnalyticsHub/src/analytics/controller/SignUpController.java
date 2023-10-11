@@ -1,14 +1,13 @@
 package analytics.controller;
 
-import analytics.UsernameExistedException;
-import analytics.model.Database;
 import analytics.model.User;
 import analytics.view.LoginViewer;
-import analytics.EmptyInputException;
-import analytics.InvalidPasswordLengthException;
+import analytics.model.UserModel;
+import analytics.model.exceptions.EmptyInputException;
+import analytics.model.exceptions.InvalidPasswordLengthException;
+import analytics.model.exceptions.UsernameExistedException;
 
 import java.io.IOException;
-import java.util.regex.Pattern;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,8 +19,6 @@ import javafx.stage.Stage;
 public class SignUpController {
 
     private Stage primaryStage;
-    
-    private Database dataBase;
 
     @FXML
     private TextField usernameInputField;
@@ -32,14 +29,10 @@ public class SignUpController {
     @FXML
     private TextField lastNameInputField;
 
-    public SignUpController() {
-	dataBase = new Database();
-    }
-    
     public void setPrimaryStage(Stage primaryStage) {
 	this.primaryStage = primaryStage;
     }
-    
+
     @FXML
     public void signUpUserHandler(ActionEvent event) {
 	String username = usernameInputField.getText();
@@ -52,10 +45,10 @@ public class SignUpController {
 	    checkInputEmpty(password);
 	    checkInputEmpty(firstName);
 	    checkInputEmpty(lastName);
-	    dataBase.checkUserExist(username);
+	    UserModel.getInstance().checkUserExist(username);
 	    checkPasswordLength(password);
-	    
-	    dataBase.createUser(new User(username, password, firstName, lastName, 0));
+
+	    UserModel.getInstance().createUser(new User(username, password, firstName, lastName, 0));
 	    Alert loginFailedAlert = new Alert(AlertType.INFORMATION);
 	    loginFailedAlert.setHeaderText("Sign Up Success. Your user profile is created.");
 	    loginFailedAlert.setContentText("Click OK to proceed to login.");
@@ -109,7 +102,7 @@ public class SignUpController {
 	    throw new EmptyInputException();
 	}
     }
-    
+
     private void checkPasswordLength(String input) throws InvalidPasswordLengthException {
 	if (input.length() < 6) {
 	    throw new InvalidPasswordLengthException();

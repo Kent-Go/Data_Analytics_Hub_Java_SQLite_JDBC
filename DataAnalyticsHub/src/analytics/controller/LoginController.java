@@ -1,9 +1,9 @@
 package analytics.controller;
 
-import analytics.EmptyInputException;
-import analytics.UserVerificationFailException;
+import analytics.model.exceptions.*;
 import analytics.model.Database;
 import analytics.model.User;
+import analytics.model.UserModel;
 import analytics.view.DashboardViewer;
 import analytics.view.SignUpViewer;
 
@@ -20,15 +20,12 @@ public class LoginController {
 
     private Stage primaryStage;
     
-    private Database dataBase;
-
     @FXML
     private TextField usernameInputField;
     @FXML
     private TextField passwordInputField;
     
     public LoginController() {
-	dataBase = new Database();
     }
     
     public void setPrimaryStage(Stage primaryStage) {
@@ -43,8 +40,7 @@ public class LoginController {
 	try {
 	    checkInputEmpty(username);
 	    checkInputEmpty(password);
-	    dataBase.verifyUser(username, password);
-	    User loginUser = dataBase.retrieveUser(username);
+	    User loginUser = UserModel.getInstance().verifyUser(username, password);
 	    
 	    DashboardViewer dashboardViewer = new DashboardViewer();
 	    dashboardViewer.setPrimaryStage(primaryStage);
@@ -61,7 +57,8 @@ public class LoginController {
 	    loginFailedAlert.setHeaderText("Login Failed");
 	    loginFailedAlert.setContentText(e.getMessage());
 	    loginFailedAlert.show();
-	} catch (IOException e) {
+	} 
+	catch (IOException e) {
 	    e.printStackTrace();
 	    Alert fileLoadingErrorAlert = new Alert(AlertType.ERROR);
 	    fileLoadingErrorAlert.setHeaderText("Fail loading LoginView.fxml");

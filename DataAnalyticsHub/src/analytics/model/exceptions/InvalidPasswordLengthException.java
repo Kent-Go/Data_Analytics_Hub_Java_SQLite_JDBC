@@ -1,4 +1,4 @@
-package analytics;
+package analytics.model.exceptions;
 
 public class InvalidPasswordLengthException extends Exception {
     public InvalidPasswordLengthException() {

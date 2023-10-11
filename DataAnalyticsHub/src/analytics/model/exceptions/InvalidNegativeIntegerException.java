@@ -11,7 +11,7 @@
  * All rights reserved.
  */
 
-package analytics;
+package analytics.model.exceptions;
 
 /**
  * 

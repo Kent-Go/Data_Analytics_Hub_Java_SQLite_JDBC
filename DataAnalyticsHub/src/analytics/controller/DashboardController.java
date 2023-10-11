@@ -1,5 +1,6 @@
 package analytics.controller;
 
+import analytics.model.exceptions.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,20 +10,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.PriorityQueue;
 
-import analytics.EmptyInputException;
-import analytics.ExistedPostIDException;
-import analytics.InvalidNegativeIntegerException;
-
-import analytics.model.Database;
 import analytics.model.Post;
+import analytics.model.PostModel;
 import analytics.model.User;
+import analytics.model.UserModel;
 import analytics.view.EditProfileViewer;
 import analytics.view.LoginViewer;
-import analytics.InvalidNonPositiveIntegerException;
-import analytics.InvalidContentException;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -44,8 +42,6 @@ public class DashboardController {
     private Stage primaryStage;
 
     private User loginUser;
-
-    private Database dataBase;
 
     @FXML
     private Label welcomeMessage;
@@ -121,18 +117,20 @@ public class DashboardController {
 
     @FXML
     private Button upgradeToVipButton;
-    
+
     @FXML
     private TabPane dashboardTabPane;
-    
+
     @FXML
     private Tab dataVisualizationTab;
-    
+
     @FXML
     private Tab bulkImportPostTab;
 
+    @FXML
+    private PieChart PostSharesDistributionPieChart;
+
     public DashboardController() {
-	dataBase = new Database();
     }
 
     public void setPrimaryStage(Stage primaryStage) {
@@ -143,14 +141,20 @@ public class DashboardController {
 	this.loginUser = loginUser;
 	addPostAuthorLabelField.setText(this.loginUser.getUsername());
 
-	ObservableList<String> authorList = dataBase.retreieveAllUsersName();
+	ObservableList<String> authorList = UserModel.getInstance().retreieveAllUsersName();
 	authorList.add("All Users");
 	retrieveTopNLikesPostAuthorChoiceBox.setItems(authorList);
 
 	if (this.loginUser.getVip() == 1) {
 	    upgradeToVipButton.setVisible(false);
-	}
-	else {
+
+	    // FIXTHIS
+	    ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
+		    new PieChart.Data("0 - 99", 13), new PieChart.Data("100 - 999", 25),
+		    new PieChart.Data("1000 and above", 10));
+
+	    PostSharesDistributionPieChart.setData(pieChartData);
+	} else {
 	    dashboardTabPane.getTabs().remove(dataVisualizationTab);
 	    dashboardTabPane.getTabs().remove(bulkImportPostTab);
 	}
@@ -184,7 +188,7 @@ public class DashboardController {
 		.setContentText("Would you like to subscribe to the application for a monthly fee of $0?");
 	upgradeVipConfirnmationAlert.showAndWait().ifPresent(buttonClicked -> {
 	    if (buttonClicked == ButtonType.OK) {
-		dataBase.upgradeUserToVip(loginUser);
+		UserModel.getInstance().upgradeUserToVip(loginUser);
 
 		Alert upgradeVIPSuccessAlert = new Alert(AlertType.INFORMATION);
 		upgradeVIPSuccessAlert.setHeaderText("You are now upgraded to VIP.");
@@ -239,7 +243,8 @@ public class DashboardController {
 	    String postContent = readInputContent(content); // post content
 	    String postDateTime = readInputDateTime(dateTime); // post date-time of creation
 
-	    dataBase.createPost(new Post(postId, postContent, postAuthor, postLikes, postShares, postDateTime));
+	    PostModel.getInstance()
+		    .createPost(new Post(postId, postContent, postAuthor, postLikes, postShares, postDateTime));
 
 	    Alert addPostSuccess = new Alert(AlertType.INFORMATION);
 	    addPostSuccess.setHeaderText("Add Post Success. Your new post is now saved.");
@@ -336,7 +341,7 @@ public class DashboardController {
 	    Post post = readInputRetrievePostID(id);
 
 	    if (post != null) {
-		dataBase.removePost(post.getId());
+		PostModel.getInstance().removePost(post.getId());
 		Alert removePostSuccess = new Alert(AlertType.INFORMATION);
 		removePostSuccess.setHeaderText("Remove Post Success");
 		removePostSuccess.setContentText("The post is successfully removed from the database!");
@@ -379,7 +384,7 @@ public class DashboardController {
 	    int intNumberPost = readInputPositiveInt(strNumberPost);
 
 	    if (selectedAuthor != null) {
-		PriorityQueue<Post> topNLikesPost = dataBase.retrieveTopNLikesPost(selectedAuthor);
+		PriorityQueue<Post> topNLikesPost = PostModel.getInstance().retrieveTopNLikesPost(selectedAuthor);
 
 		if (topNLikesPost.size() == 0) {
 		    NumPostExceedDatabaseLabel
@@ -502,7 +507,7 @@ public class DashboardController {
 	try {
 	    input = input.trim();
 	    postID = readInputNonNegativeInt(input);
-	    post = dataBase.retrievePost(postID);
+	    post = PostModel.getInstance().retrievePost(postID);
 	} catch (EmptyInputException inputEmptyError) {
 	    throw inputEmptyError;
 	} catch (NumberFormatException numberFormatError) {
@@ -531,7 +536,7 @@ public class DashboardController {
 	try {
 	    input = input.trim();
 	    postID = readInputNonNegativeInt(input);
-	    dataBase.checkPostIDExist(postID);
+	    PostModel.getInstance().checkPostIDExist(postID);
 	} catch (EmptyInputException inputEmptyError) {
 	    throw inputEmptyError;
 	} catch (NumberFormatException numberFormatError) {

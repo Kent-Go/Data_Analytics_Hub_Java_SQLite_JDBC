@@ -1,11 +1,11 @@
 package analytics.controller;
 
-import analytics.UsernameExistedException;
+import analytics.model.exceptions.*;
 import analytics.model.Database;
+import analytics.model.PostModel;
 import analytics.model.User;
+import analytics.model.UserModel;
 import analytics.view.DashboardViewer;
-import analytics.EmptyInputException;
-import analytics.InvalidPasswordLengthException;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -22,6 +22,7 @@ public class EditProfileController {
     private Stage primaryStage;
     
     private User loginUser;
+    
     private User updatedUser;
 
     @FXML
@@ -56,8 +57,6 @@ public class EditProfileController {
 	String firstName = firstNameInputField.getText();
 	String lastName = lastNameInputField.getText();
 
-	Database dataBase = new Database();
-
 	try {
 	    checkInputEmpty(username);
 	    checkInputEmpty(password);
@@ -65,13 +64,14 @@ public class EditProfileController {
 	    checkInputEmpty(lastName);
 	    
 	    if (!username.equals(loginUser.getUsername())) {
-		dataBase.checkUserExist(username);
+		UserModel.getInstance().checkUserExist(username);
 	    }
 
 	    checkPasswordLength(password);
 	    
 	    this.updatedUser = new User(username, password, firstName, lastName, 0);
-	    dataBase.updateUser(loginUser, updatedUser);
+	    UserModel.getInstance().updateUser(loginUser, updatedUser);
+	    PostModel.getInstance().updatePost(loginUser, updatedUser);
 	    Alert loginFailedAlert = new Alert(AlertType.INFORMATION);
 	    loginFailedAlert.setHeaderText("Edit Profile Success. Your new user profile is now saved.");
 	    loginFailedAlert.setContentText("Click OK to go back to dashboard.");

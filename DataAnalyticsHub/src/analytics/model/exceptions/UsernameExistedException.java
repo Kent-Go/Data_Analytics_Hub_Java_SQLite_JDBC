@@ -1,4 +1,4 @@
-package analytics;
+package analytics.model.exceptions;
 
 public class UsernameExistedException extends Exception {
     public UsernameExistedException() {
