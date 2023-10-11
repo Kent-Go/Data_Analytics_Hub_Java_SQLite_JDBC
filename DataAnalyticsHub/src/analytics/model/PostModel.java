@@ -3,6 +3,9 @@ package analytics.model;
 import java.util.PriorityQueue;
 
 import analytics.model.exceptions.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.chart.PieChart;
 
 public class PostModel {
 
@@ -59,11 +62,10 @@ public class PostModel {
     public Post retrievePost(int postID) {
 	return postDatabaseHandler.retrievePost(postID);
     }
+    
+    public ObservableList<PieChart.Data> retrievePostSharePieChart() {
+	return postDatabaseHandler.retrievePostSharePieChart();
+	
+    }
 
 }
-//
-//SELECT
-//SUM(CASE WHEN City = 'London' then 1 else 0 end) AS LondonCount,
-//SUM(CASE WHEN City = 'Madrid' then 1 else 0 end) AS MadridCount,
-//SUM(CASE WHEN City = 'México D.F.' then 1 else 0 end) AS MexicoCount
-//FROM [Customers]

@@ -2,6 +2,7 @@ package analytics.controller;
 
 import analytics.model.exceptions.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.PriorityQueue;
+import java.util.Scanner;
 
 import analytics.model.Post;
 import analytics.model.PostModel;
@@ -33,6 +35,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -147,13 +150,6 @@ public class DashboardController {
 
 	if (this.loginUser.getVip() == 1) {
 	    upgradeToVipButton.setVisible(false);
-
-	    // FIXTHIS
-	    ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
-		    new PieChart.Data("0 - 99", 13), new PieChart.Data("100 - 999", 25),
-		    new PieChart.Data("1000 and above", 10));
-
-	    PostSharesDistributionPieChart.setData(pieChartData);
 	} else {
 	    dashboardTabPane.getTabs().remove(dataVisualizationTab);
 	    dashboardTabPane.getTabs().remove(bulkImportPostTab);
@@ -498,6 +494,123 @@ public class DashboardController {
 	    integerNegativeErrorAlert.setContentText(integerNegativeError.getMessage());
 	    integerNegativeErrorAlert.show();
 	}
+    }
+
+    @FXML
+    public void generatePieChartHandler(ActionEvent event) {
+	// Retrieve Post Share Distribution data
+	ObservableList<PieChart.Data> pieChartData = PostModel.getInstance().retrievePostSharePieChart();
+	// Display Pie Chart for Post Share Distribution
+	PostSharesDistributionPieChart.setData(pieChartData);
+    }
+
+    @FXML
+    public void bulkImportPostHandler(ActionEvent event) {
+	FileChooser fileChooser = new FileChooser();
+
+	ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV file (*.csv)", "*.csv");
+
+	fileChooser.getExtensionFilters().add(extFilter);
+
+	File selectedFile = fileChooser.showOpenDialog(primaryStage);
+
+	int postImportSuccess = 0;
+
+	// Convert file to an input stream
+	try {
+	    FileInputStream inputStream = new FileInputStream(selectedFile);
+
+	    Scanner scanner = new Scanner(inputStream);
+
+	    scanner.nextLine(); /* Bypass header. */
+
+	    while (scanner.hasNextLine()) {
+		String fileRow = scanner.nextLine();
+
+		String[] postRow = fileRow.split(","); /* Split the row into tokens with "," as separator. */
+
+		try {
+		    int postId = readInputPostID(postRow[0]); // post ID
+		    String postContent = readInputContent(postRow[1]); // post content
+		    checkInputEmpty(postRow[2]); // post author
+		    int postLikes = readInputNonNegativeInt(postRow[3]); // post number of like
+		    int postShares = readInputNonNegativeInt(postRow[4]); // post number of share
+		    String postDateTime = readInputDateTime(postRow[5]); // post date-time of creation
+
+		    Post post = new Post(postId, postContent, postRow[2], postLikes, postShares,
+			    postDateTime); /* Create Post object. */
+
+		    PostModel.getInstance().createPost(post); /* Add Post object into postDatabase. */
+
+		    postImportSuccess += 1; /* Increment postImportSuccess if import post successful. */
+
+		} catch (EmptyInputException inputEmptyError) {
+		    Alert inputEmptyErrorAlert = new Alert(AlertType.ERROR);
+		    inputEmptyErrorAlert.setHeaderText("Import Post Failed");
+		    inputEmptyErrorAlert
+			    .setContentText(inputEmptyError.getMessage() + "\nClick OK to continue to next post.");
+		    inputEmptyErrorAlert.showAndWait();
+		} catch (NumberFormatException numberFormatError) {
+		    Alert numberFormatErrorAlert = new Alert(AlertType.ERROR);
+		    numberFormatErrorAlert.setHeaderText("Import Post Failed");
+		    numberFormatErrorAlert
+			    .setContentText("Input must be an integer value." + "\nClick OK to continue to next post.");
+		    numberFormatErrorAlert.showAndWait();
+		} catch (ExistedPostIDException postIDExisted) {
+		    Alert PostIDExistedAlert = new Alert(AlertType.ERROR);
+		    PostIDExistedAlert.setHeaderText("Import Post Failed");
+		    PostIDExistedAlert
+			    .setContentText(postIDExisted.getMessage() + "\nClick OK to continue to next post.");
+		    PostIDExistedAlert.showAndWait();
+		} catch (InvalidNegativeIntegerException integerNegativeError) {
+		    Alert integerNegativeErrorAlert = new Alert(AlertType.ERROR);
+		    integerNegativeErrorAlert.setHeaderText("Export Post Failed");
+		    integerNegativeErrorAlert
+			    .setContentText(integerNegativeError.getMessage() + "\nClick OK to continue to next post.");
+		    integerNegativeErrorAlert.showAndWait();
+		} catch (InvalidContentException contentFormatError) {
+		    Alert integerNegativeErrorAlert = new Alert(AlertType.ERROR);
+		    integerNegativeErrorAlert.setHeaderText("Add Post Failed");
+		    integerNegativeErrorAlert
+			    .setContentText(contentFormatError.getMessage() + "\nClick OK to continue to next post.");
+		    integerNegativeErrorAlert.showAndWait();
+		} catch (ParseException e) {
+		    Alert parseErrorAlert = new Alert(AlertType.ERROR);
+		    parseErrorAlert.setHeaderText("Add Post Failed");
+		    parseErrorAlert.setContentText(
+			    "Invalid date-time value or/and format. The date-time must be in the format of DD/MM/YYYY HH:MM."
+				    + "\nClick OK to continue to next post.");
+		    parseErrorAlert.showAndWait();
+		}
+
+	    }
+
+	    scanner.close(); /* Close scanner. */
+
+	    inputStream.close(); /* Close posts.csv. */
+
+	    Alert importPostStatus = new Alert(AlertType.INFORMATION);
+	    importPostStatus.setHeaderText("Bulk Import Post Status");
+	    importPostStatus.setContentText(String.format("%d post(s) is successfully imported ", postImportSuccess));
+	    importPostStatus.showAndWait();
+
+	} catch (NullPointerException fileIsNullError) {
+	    Alert fileIsNullErrorAlert = new Alert(AlertType.ERROR);
+	    fileIsNullErrorAlert.setHeaderText("Import Post Failed");
+	    fileIsNullErrorAlert.setContentText("File is null. Please select a .csv file!");
+	    fileIsNullErrorAlert.show();
+	} catch (FileNotFoundException fileNotFoundError) {
+	    Alert fileNotFoundErrorAlert = new Alert(AlertType.ERROR);
+	    fileNotFoundErrorAlert.setHeaderText("Import Post Failed");
+	    fileNotFoundErrorAlert.setContentText("File pathname did not exist! Please select a .csv file!");
+	    fileNotFoundErrorAlert.show();
+	} catch (IOException IOError) {
+	    Alert IOErrorAlert = new Alert(AlertType.ERROR);
+	    IOErrorAlert.setHeaderText("Import Post Failed");
+	    IOErrorAlert.setContentText("Failed or interrupted I/O operations when reading file! Please try again!");
+	    IOErrorAlert.show();
+	}
+
     }
 
     private Post readInputRetrievePostID(String input)
