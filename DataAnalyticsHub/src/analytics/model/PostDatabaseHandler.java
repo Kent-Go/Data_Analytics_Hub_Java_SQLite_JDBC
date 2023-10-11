@@ -14,7 +14,6 @@ import javafx.scene.chart.PieChart;
 public class PostDatabaseHandler {
 
     public void createPost(Post newPost) {
-
 	try (Connection con = DatabaseConnection.getConnection(); Statement statement = con.createStatement();) {
 	    String query = String.format(
 		    "INSERT INTO Posts (ID,CONTENT,AUTHOR,LIKES,SHARES,DATETIME) VALUES ('%d','%s', '%s', '%d', '%d', '%s')",
@@ -30,14 +29,12 @@ public class PostDatabaseHandler {
 	} catch (SQLException e) {
 	    System.out.println(e.getMessage());
 	}
-
     }
-    
+
     public void updatePost(User outdatedUser, User updatedUser) {
 	try (Connection con = DatabaseConnection.getConnection(); Statement statement = con.createStatement();) {
 
-	    String updateUserProfileQuery = String.format(
-		    "UPDATE Posts SET AUTHOR = '%s' WHERE AUTHOR = '%s';",
+	    String updateUserProfileQuery = String.format("UPDATE Posts SET AUTHOR = '%s' WHERE AUTHOR = '%s';",
 		    updatedUser.getUsername(), outdatedUser.getUsername());
 
 	    int result = statement.executeUpdate(updateUserProfileQuery);
@@ -90,18 +87,16 @@ public class PostDatabaseHandler {
 	    try (ResultSet resultSet = statement.executeQuery(query)) {
 		while (resultSet.next()) {
 		    topNLikesPostAllUsers.add(new Post(resultSet.getInt("ID"), resultSet.getString("CONTENT"),
-			    resultSet.getString("AUTHOR"), resultSet.getInt("LIKES"),
-			    resultSet.getInt("SHARES"), resultSet.getString("DATETIME")));
+			    resultSet.getString("AUTHOR"), resultSet.getInt("LIKES"), resultSet.getInt("SHARES"),
+			    resultSet.getString("DATETIME")));
 		}
 	    }
 	} catch (SQLException e) {
 	    System.out.println(e.getMessage());
 	}
-
 	return topNLikesPostAllUsers;
-
     }
-    
+
     public PriorityQueue<Post> retrieveTopNLikesPostSingleUser(String author) {
 	PriorityQueue<Post> topNLikesPostSingleUser = new PriorityQueue<Post>(new PostComparator());
 
@@ -111,18 +106,16 @@ public class PostDatabaseHandler {
 	    try (ResultSet resultSet = statement.executeQuery(query)) {
 		while (resultSet.next()) {
 		    topNLikesPostSingleUser.add(new Post(resultSet.getInt("ID"), resultSet.getString("CONTENT"),
-			    resultSet.getString("AUTHOR"), resultSet.getInt("LIKES"),
-			    resultSet.getInt("SHARES"), resultSet.getString("DATETIME")));
+			    resultSet.getString("AUTHOR"), resultSet.getInt("LIKES"), resultSet.getInt("SHARES"),
+			    resultSet.getString("DATETIME")));
 		}
 	    }
 	} catch (SQLException e) {
 	    System.out.println(e.getMessage());
 	}
-
 	return topNLikesPostSingleUser;
-
     }
-    
+
     public Post retrievePost(int postID) {
 	Post post = null;
 	try (Connection con = DatabaseConnection.getConnection(); Statement statement = con.createStatement();) {
@@ -131,29 +124,28 @@ public class PostDatabaseHandler {
 	    try (ResultSet resultSet = statement.executeQuery(query)) {
 		while (resultSet.next()) {
 		    post = new Post(resultSet.getInt("ID"), resultSet.getString("CONTENT"),
-			    resultSet.getString("AUTHOR"), resultSet.getInt("LIKES"),
-			    resultSet.getInt("SHARES"), resultSet.getString("DATETIME"));
+			    resultSet.getString("AUTHOR"), resultSet.getInt("LIKES"), resultSet.getInt("SHARES"),
+			    resultSet.getString("DATETIME"));
 		}
 	    }
 
 	} catch (SQLException e) {
 	    System.out.println(e.getMessage());
 	}
-	
 	return post;
     }
-    
+
     public ObservableList<PieChart.Data> retrievePostSharePieChart() {
-	
+
 	int Post0_99 = 0;
 	int Post100_999 = 0;
 	int Post1000_and_above = 0;
-	
+
 	try (Connection con = DatabaseConnection.getConnection(); Statement statement = con.createStatement();) {
-	    String query = String.format("SELECT " + " SUM(CASE WHEN (SHARES >= 0 AND SHARES <= 99) then 1 else 0 end) AS Post0_99, " +
-		    " SUM(CASE WHEN (SHARES >=100 AND SHARES <= 999) then 1 else 0 end) AS Post100_999, " +
-		    " SUM(CASE WHEN SHARES >=1000 then 1 else 0 end) AS Post1000_and_above " 
-	    	+ "FROM Posts");
+	    String query = String
+		    .format("SELECT " + " SUM(CASE WHEN (SHARES >= 0 AND SHARES <= 99) then 1 else 0 end) AS Post0_99, "
+			    + " SUM(CASE WHEN (SHARES >=100 AND SHARES <= 999) then 1 else 0 end) AS Post100_999, "
+			    + " SUM(CASE WHEN SHARES >=1000 then 1 else 0 end) AS Post1000_and_above " + "FROM Posts");
 
 	    try (ResultSet resultSet = statement.executeQuery(query)) {
 		while (resultSet.next()) {
@@ -166,10 +158,8 @@ public class PostDatabaseHandler {
 	} catch (SQLException e) {
 	    System.out.println(e.getMessage());
 	}
-	
-	
-	return FXCollections.observableArrayList(
-		    new PieChart.Data("0 - 99", Post0_99), new PieChart.Data("100 - 999", Post100_999),
-		    new PieChart.Data("1000 and above", Post1000_and_above));
+
+	return FXCollections.observableArrayList(new PieChart.Data("0 - 99", Post0_99),
+		new PieChart.Data("100 - 999", Post100_999), new PieChart.Data("1000 and above", Post1000_and_above));
     }
 }

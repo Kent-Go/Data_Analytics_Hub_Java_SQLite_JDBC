@@ -284,7 +284,6 @@ public class DashboardController {
 		    "Invalid date-time value or/and format. The date-time must be in the format of DD/MM/YYYY HH:MM.");
 	    parseErrorAlert.show();
 	}
-
     }
 
     @FXML

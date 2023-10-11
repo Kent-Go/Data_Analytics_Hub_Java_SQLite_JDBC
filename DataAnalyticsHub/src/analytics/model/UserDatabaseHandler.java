@@ -13,7 +13,6 @@ import javafx.collections.ObservableList;
 public class UserDatabaseHandler {
 
     public void createUser(User newUser) {
-
 	try (Connection con = DatabaseConnection.getConnection(); Statement statement = con.createStatement();) {
 	    String query = String.format(
 		    "INSERT INTO Users (USERNAME,PASSWORD,FIRSTNAME,LASTNAME, VIP) VALUES ('%s','%s', '%s', '%s', '%d')",
