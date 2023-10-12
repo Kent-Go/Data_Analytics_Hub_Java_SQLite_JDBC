@@ -60,7 +60,12 @@ public class PostModel {
      * The method to call createPost method in postDatabaseHandler to create a new
      * post in SQLite Database.
      * 
-     * @param post The Post object to be create based on
+     * @param id       The post id input
+     * @param content  The post content input
+     * @param author   The post author input
+     * @param likes    The post likes input
+     * @param shares   The post shares input
+     * @param dateTime The post dateTime input
      * @throws EmptyInputException
      * @throws ExistedPostIDException
      * @throws InvalidNegativeIntegerException

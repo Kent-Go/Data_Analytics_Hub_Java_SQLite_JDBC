@@ -55,6 +55,17 @@ public class UserModel {
 	return userModel;
     }
 
+    /**
+     * The method to call verifyUser method in userDatabaseHandler to create a new
+     * user in SQLite Database. It first validates username and passwordbefore
+     * calling verifyUser method.
+     * 
+     * @param username The username input
+     * @param password The password input
+     * @throws EmptyInputException
+     * @throws UsernameExistedException
+     * @throws InvalidPasswordLengthException
+     */
     public User verifyUser(String username, String password) throws UserVerificationFailException, EmptyInputException {
 	try {
 	    String validatedUsername = validator.checkInputEmpty(username);
@@ -72,7 +83,10 @@ public class UserModel {
      * user in SQLite Database. It validates username, password, first name and last
      * input inputs before calling createUser method.
      * 
-     * @param newUser The User object to be create based on
+     * @param username  The username input
+     * @param password  The password input
+     * @param firstName The firstName input
+     * @param lastName  The lastName input
      * @throws EmptyInputException
      * @throws UsernameExistedException
      * @throws InvalidPasswordLengthException
@@ -109,8 +123,11 @@ public class UserModel {
      * 
      * @param outdatedUser The User object which its username will be used to search
      *                     for corresponding record
-     * @param updatedUser  The User object which its username will be used to update
-     *                     the user profile's username
+     * @param username     The username input
+     * @param password     The password input
+     * @param firstName    The firstName input
+     * @param lastName     The lastName input
+     * @throws EmptyInputException
      * @throws EmptyInputException
      * @throws UsernameExistedException
      * @throws InvalidPasswordLengthException
