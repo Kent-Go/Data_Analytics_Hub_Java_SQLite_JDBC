@@ -48,3 +48,20 @@ Go to ```Arguments``` tab, paste the following arguments into ```VM arguments```
 Make sure to untick the boxes underneath the VM arguments. 
 
 To run, click the ```Apply``` button followed by the ```Run``` button.
+
+## Class Design
+- ```analytics```:
+  - ```Main```: Entry point for the Data Analytics Hub application.
+
+- ```analytics.model```:
+  - ```Post```: Serves as a Post object with properties include id, content, author, likes, shares and date-time with getter methods to access the private instance variables.
+
+- ```analytics.model.exceptions```:
+  - ```ExistedPostIDException```: User-defined exception for invalid post ID integer.
+  - ```EmptyInputException```: User-defined exception for empty string.
+  - ```InvalidContentException```: User-defined exception for string content with "," included.
+  - ```InvalidNegativeIntegerException```: User-defined exception for negative integer.
+  - ```InvalidNonPositiveIntegerException```: User-defined exception for non-positive integer.
+
+- ```analytics.view```:
+  - 
