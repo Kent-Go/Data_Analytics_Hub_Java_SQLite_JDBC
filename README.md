@@ -61,8 +61,8 @@ To run, click the ```Apply``` button followed by the ```Run``` button.
   - ```UserModel```: Serves as the Model for the User in Data Analytics Hub application.
   - ```PostDatabaseHandler```: Provides CRUD methods for post-related SQL query to access SQLite Database.
   - ```UserDatabaseHandler```: Provides CRUD methods for user-related SQL query to access SQLite Database.
-  - ```PostComparator```: Implement the Comparator interface for Post object to sort post based on likes in descending order
-  - ```Validator```: Provides validation logics for user and post related inputs entered by users
+  - ```PostComparator```: Implement the Comparator interface for Post object to sort post based on likes in descending order.
+  - ```Validator```: Provides validation logics for user and post related inputs entered by users.
 
 - ```analytics.model.exceptions```:
   - ```ExistedPostIDException```: User-defined exception for invalid post ID integer.
@@ -75,13 +75,13 @@ To run, click the ```Apply``` button followed by the ```Run``` button.
   - ```UserVerificationFailException```: User-defined exception for failed username and password verification.
 
 - ```analytics.view```:
-  - ```DashboardViewer```: Serves as the view for the Dashboard interface presentation
-  - ```EditProfileViewer```: Serves as the view for the Edit Profile interface presentation
-  - ```LoginViewer```: Serves as the view for the Login interface presentation
-  - ```SignUpViewer```: Serves as the view for the Sign Up interface presentation
+  - ```DashboardViewer```: Serves as the view for the Dashboard interface presentation.
+  - ```EditProfileViewer```: Serves as the view for the Edit Profile interface presentation.
+  - ```LoginViewer```: Serves as the view for the Login interface presentation.
+  - ```SignUpViewer```: Serves as the view for the Sign Up interface presentation.
 
 - ```analytics.controller```:
-  - ```DashboardController```: Serves as the controller for the Dashboard logic
-  - ```EditProfileController```: Serves as the controller for the Edit Profile logic
-  - ```LoginController```: Serves as the controller for the Login logic
-  - ```SignUpController```: Serves as the controller for the Sign Up logic
+  - ```DashboardController```: Serves as the controller for the Dashboard logic.
+  - ```EditProfileController```: Serves as the controller for the Edit Profile logic.
+  - ```LoginController```: Serves as the controller for the Login logic.
+  - ```SignUpController```: Serves as the controller for the Sign Up logic.
