@@ -54,7 +54,15 @@ To run, click the ```Apply``` button followed by the ```Run``` button.
   - ```Main```: Entry point for the Data Analytics Hub application.
 
 - ```analytics.model```:
+  - ```DatabaseConnection```: Serves as a SQLite Database connection for UserDataabseHandler and PostDatabaseHandler to access, retrieve, save and modify records in DataAnalyticsHub.db.
   - ```Post```: Serves as a Post object with properties include id, content, author, likes, shares and date-time with getter methods to access the private instance variables.
+  - ```User```: Serves as a User object with properties include username, password, firstName, lastName and vip with getter methods to access the User's private instance variables.
+  - ```PostModel```: Serves as the Model for the Post in Data Analytics Hub application.
+  - ```UserModel```: Serves as the Model for the User in Data Analytics Hub application.
+  - ```PostDatabaseHandler```: Provides CRUD methods for post-related SQL query to access SQLite Database.
+  - ```UserDatabaseHandler```: Provides CRUD methods for user-related SQL query to access SQLite Database.
+  - ```PostComparator```: Implement the Comparator interface for Post object to sort post based on likes in descending order
+  - ```Validator```: Provides validation logics for user and post related inputs entered by users
 
 - ```analytics.model.exceptions```:
   - ```ExistedPostIDException```: User-defined exception for invalid post ID integer.
@@ -62,6 +70,18 @@ To run, click the ```Apply``` button followed by the ```Run``` button.
   - ```InvalidContentException```: User-defined exception for string content with "," included.
   - ```InvalidNegativeIntegerException```: User-defined exception for negative integer.
   - ```InvalidNonPositiveIntegerException```: User-defined exception for non-positive integer.
+  - ```InvalidPasswordLengthException```: User-defined exception for incorrect password length.
+  - ```UsernameExistedException```: User-defined exception for existed username in SQLite Database.
+  - ```UserVerificationFailException```: User-defined exception for failed username and password verification.
 
 - ```analytics.view```:
-  - 
+  - ```DashboardViewer```: Serves as the view for the Dashboard interface presentation
+  - ```EditProfileViewer```: Serves as the view for the Edit Profile interface presentation
+  - ```LoginViewer```: Serves as the view for the Login interface presentation
+  - ```SignUpViewer```: Serves as the view for the Sign Up interface presentation
+
+- ```analytics.controller```:
+  - ```DashboardController```: Serves as the controller for the Dashboard logic
+  - ```EditProfileController```: Serves as the controller for the Edit Profile logic
+  - ```LoginController```: Serves as the controller for the Login logic
+  - ```SignUpController```: Serves as the controller for the Sign Up logic
