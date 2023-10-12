@@ -1,3 +1,15 @@
+/*
+
+ * SignUpController.java
+ * 
+ * Version: 1.0
+ *
+ * Date: 01/10/2023
+ * 
+ * © 2023 Go Chee Kin.
+ * 
+ * All rights reserved.
+ */
 package analytics.controller;
 
 import analytics.model.User;
@@ -16,6 +28,11 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+/**
+ * 
+ * The SignUpController class serves as the controller for the Sign Up logic in
+ * Data Analytics Hub application.
+ */
 public class SignUpController {
 
     private Stage primaryStage;
@@ -29,10 +46,22 @@ public class SignUpController {
     @FXML
     private TextField lastNameInputField;
 
+    /**
+     * The method to set private primaryStage variable
+     * 
+     * @param primaryStage The Stage object to be set
+     */
     public void setPrimaryStage(Stage primaryStage) {
 	this.primaryStage = primaryStage;
     }
 
+    /**
+     * The method to handle user login. It validates username, password, first name
+     * and last input inputs.
+     * 
+     * @param event The ActionEvent object which indicates that Sign Up
+     *              button-clicked action occurred
+     */
     @FXML
     public void signUpUserHandler(ActionEvent event) {
 	String username = usernameInputField.getText();
@@ -45,15 +74,18 @@ public class SignUpController {
 	    checkInputEmpty(password);
 	    checkInputEmpty(firstName);
 	    checkInputEmpty(lastName);
-	    UserModel.getInstance().checkUserExist(username);
-	    checkPasswordLength(password);
+	    UserModel.getInstance().checkUserExist(username); /* checks if username already exists in SQLite Database */
+	    checkPasswordLength(password); /* checks password length */
 
-	    UserModel.getInstance().createUser(new User(username, password, firstName, lastName, 0));
-	    Alert loginFailedAlert = new Alert(AlertType.INFORMATION);
-	    loginFailedAlert.setHeaderText("Sign Up Success. Your user profile is created.");
-	    loginFailedAlert.setContentText("Click OK to proceed to login.");
-	    loginFailedAlert.showAndWait();
-	    redirectLoginPageHandler(event);
+	    UserModel.getInstance().createUser(new User(username, password, firstName, lastName,
+		    0)); /* create new user profile record in SQLite Database */
+
+	    Alert SignUpSuccessAlert = new Alert(AlertType.INFORMATION);
+	    SignUpSuccessAlert.setHeaderText("Sign Up Success. Your user profile is created.");
+	    SignUpSuccessAlert.setContentText("Click OK to proceed to login.");
+	    SignUpSuccessAlert.showAndWait();
+
+	    redirectLoginPageHandler(event); /* redirect the user to login scene */
 	} catch (EmptyInputException e) {
 	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
 	    loginFailedAlert.setHeaderText("Sign Up Failed");
@@ -72,6 +104,12 @@ public class SignUpController {
 	}
     }
 
+    /**
+     * The method to redirect user to sign in scene.
+     * 
+     * @param event The ActionEvent object which indicates that Login button-clicked
+     *              action occurred
+     */
     @FXML
     public void redirectLoginPageHandler(ActionEvent event) {
 	LoginViewer loginViewer = new LoginViewer();
@@ -103,6 +141,12 @@ public class SignUpController {
 	}
     }
 
+    /**
+     * The method to check if input did not exceed 6 character length to throw
+     * user-defined InvalidPasswordLengthException
+     * 
+     * @param input The string to be check
+     */
     private void checkPasswordLength(String input) throws InvalidPasswordLengthException {
 	if (input.length() < 6) {
 	    throw new InvalidPasswordLengthException();

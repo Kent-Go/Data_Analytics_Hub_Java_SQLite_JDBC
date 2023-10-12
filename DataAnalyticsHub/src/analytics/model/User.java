@@ -1,5 +1,23 @@
+/*
+
+ * User.java
+ * 
+ * Version: 1.0
+ *
+ * Date: 01/10/2023
+ * 
+ * © 2023 Go Chee Kin.
+ * 
+ * All rights reserved.
+ */
 package analytics.model;
 
+/**
+ * 
+ * The User class serves as a User object with properties include username, password,
+ * firstName, lastName and vip. It provides getter methods to access the
+ * Post's private instance variables.
+ */
 public class User {
     // Declaration of User's Instance Variables (private)
     private String username;

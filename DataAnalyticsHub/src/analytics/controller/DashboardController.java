@@ -1,3 +1,16 @@
+/*
+
+l * DashboardController.java
+ * 
+ * Version: 1.0
+ *
+ * Date: 01/10/2023
+ * 
+ * © 2023 Go Chee Kin.
+ * 
+ * All rights reserved.
+ */
+
 package analytics.controller;
 
 import analytics.model.exceptions.*;
@@ -18,7 +31,6 @@ import analytics.model.User;
 import analytics.model.UserModel;
 import analytics.view.EditProfileViewer;
 import analytics.view.LoginViewer;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,11 +47,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
 
+/**
+ * 
+ * The DashboardController class serves as the controller for the Dashboard
+ * logic in Data Analytics Hub application.
+ */
 public class DashboardController {
 
     private Stage primaryStage;
@@ -133,13 +149,21 @@ public class DashboardController {
     @FXML
     private PieChart PostSharesDistributionPieChart;
 
-    public DashboardController() {
-    }
-
+    /**
+     * The method to set private primaryStage variable
+     * 
+     * @param primaryStage The Stage object to be set
+     */
     public void setPrimaryStage(Stage primaryStage) {
 	this.primaryStage = primaryStage;
     }
 
+    /**
+     * The method to initialize current login user and to initialize the dashboard's
+     * functionality based on vip status
+     * 
+     * @param loginUser The User object to be initialize
+     */
     public void initaliseUser(User loginUser) {
 	this.loginUser = loginUser;
 	addPostAuthorLabelField.setText(this.loginUser.getUsername());
@@ -156,10 +180,20 @@ public class DashboardController {
 	}
     }
 
+    /**
+     * The method to display welcome message using login user's first and last name
+     * 
+     */
     public void displayWelcomeMessage() {
 	welcomeMessage.setText(String.format("Welcome, %s %s", loginUser.getFirstName(), loginUser.getLastName()));
     }
 
+    /**
+     * The method to redirect user to Edit Profile scene.
+     * 
+     * @param event The ActionEvent object which indicates that Edit Profile
+     *              button-clicked action occurred
+     */
     @FXML
     public void redirectEditProfilePageHandler(ActionEvent event) {
 	try {
@@ -176,6 +210,12 @@ public class DashboardController {
 	}
     }
 
+    /**
+     * The method to upgrade user vip status.
+     * 
+     * @param event The ActionEvent object which indicates that Upgrade To VIP
+     *              button-clicked action occurred
+     */
     @FXML
     public void upgradeToVipHandler(ActionEvent event) {
 	Alert upgradeVipConfirnmationAlert = new Alert(AlertType.CONFIRMATION);
@@ -195,16 +235,27 @@ public class DashboardController {
 	});
     }
 
+    /**
+     * The method to log out user.
+     * 
+     * @param event The ActionEvent object which indicates that Logout
+     *              button-clicked action occurred
+     */
     @FXML
     public void logOutUserHandler(ActionEvent event) {
 	Alert logOutSuccessAlert = new Alert(AlertType.INFORMATION);
 	logOutSuccessAlert.setHeaderText("You are now logged out.");
 	logOutSuccessAlert.setContentText("Click OK to proceed to login.");
 	logOutSuccessAlert.showAndWait();
-	redirectLoginPage(event);
+	redirectLoginPage(event); /* redirect user to login scene */
     }
 
-    public void redirectLoginPage(ActionEvent event) {
+    /**
+     * The method to redirect user to Login scene.
+     * 
+     * @param event The ActionEvent object which passed from logOutUserHandler()
+     */
+    private void redirectLoginPage(ActionEvent event) {
 	LoginViewer loginViewer = new LoginViewer();
 
 	loginViewer.setPrimaryStage(primaryStage);
@@ -222,12 +273,18 @@ public class DashboardController {
 	primaryStage.setResizable(false);
     }
 
+    /**
+     * The method to add new post to SQLite Database
+     * 
+     * @param event The ActionEvent object which indicates that Add Post
+     *              button-clicked action occurred
+     */
     @FXML
     public void addPostHandler(ActionEvent event) {
 
 	try {
 	    String id = addPostIDInputField.getText();
-	    String postAuthor = addPostAuthorLabelField.getText(); // post author
+	    String postAuthor = addPostAuthorLabelField.getText();
 	    String likes = addPostLikesInputField.getText();
 	    String shares = addPostSharesInputField.getText();
 	    String content = addPostContentInputField.getText();
@@ -286,6 +343,12 @@ public class DashboardController {
 	}
     }
 
+    /**
+     * The method to retrieve a post from SQLite Database based on given post's ID
+     * 
+     * @param event The ActionEvent object which indicates that Retrieve
+     *              button-clicked action occurred
+     */
     @FXML
     public void retrievePostHandler(ActionEvent event) {
 	try {
@@ -328,6 +391,12 @@ public class DashboardController {
 	}
     }
 
+    /**
+     * The method to remove a post from SQLite Database based on given post's ID
+     * 
+     * @param event The ActionEvent object which indicates that Remove
+     *              button-clicked action occurred
+     */
     @FXML
     public void removePostHandler(ActionEvent event) {
 	try {
@@ -366,6 +435,13 @@ public class DashboardController {
 	}
     }
 
+    /**
+     * The method to retrieve Top N Like Post from SQLite Database based on N input
+     * and chosen author
+     * 
+     * @param event The ActionEvent object which indicates that Retrieve
+     *              button-clicked action occurred
+     */
     @FXML
     public void retrieveTopNLikesPostHandler(ActionEvent event) {
 	try {
@@ -438,6 +514,13 @@ public class DashboardController {
 	}
     }
 
+    /**
+     * The method to export a post from SQLite Database based on post's ID to .csv
+     * file
+     * 
+     * @param event The ActionEvent object which indicates that Export
+     *              button-clicked action occurred
+     */
     @FXML
     public void exportPostHandler(ActionEvent event) {
 	try {
@@ -495,6 +578,13 @@ public class DashboardController {
 	}
     }
 
+    /**
+     * The method to generate a post shares distribution pie chart from SQLite
+     * Database
+     * 
+     * @param event The ActionEvent object which indicates that Generate
+     *              button-clicked action occurred
+     */
     @FXML
     public void generatePieChartHandler(ActionEvent event) {
 	// Retrieve Post Share Distribution data
@@ -503,6 +593,13 @@ public class DashboardController {
 	PostSharesDistributionPieChart.setData(pieChartData);
     }
 
+    /**
+     * The method to bulk import multiple posts data from .csv file into SQLite
+     * Database
+     * 
+     * @param event The ActionEvent object which indicates that Import
+     *              button-clicked action occurred
+     */
     @FXML
     public void bulkImportPostHandler(ActionEvent event) {
 	FileChooser fileChooser = new FileChooser();
@@ -612,6 +709,14 @@ public class DashboardController {
 
     }
 
+    /**
+     * The method to read user's post ID input and call readInputNonNegativeInt to
+     * validate the parsed integer format and retrieve the post based on the input
+     * from database in order to return the post object.
+     * 
+     * @param text The text to be print to prompt user's input
+     * @return post The post object retrieve from database based on post's ID input
+     */
     private Post readInputRetrievePostID(String input)
 	    throws EmptyInputException, InvalidNegativeIntegerException, NumberFormatException {
 	int postID = 0;
