@@ -61,14 +61,9 @@ public class LoginController {
      */
     @FXML
     public void loginUserHandler(ActionEvent event) {
-	String username = usernameInputField.getText();
-	String password = passwordInputField.getText();
-
 	try {
-	    checkInputEmpty(username);
-	    checkInputEmpty(password);
-	    User loginUser = UserModel.getInstance().verifyUser(username,
-		    password); /* verfiy if username and password are validate using SQLite Database */
+	    User loginUser = UserModel.getInstance().verifyUser(usernameInputField.getText(), passwordInputField
+		    .getText()); /* verify if username and password are validate using SQLite Database */
 
 	    DashboardViewer dashboardViewer = new DashboardViewer();
 	    dashboardViewer.setPrimaryStage(primaryStage);
@@ -117,17 +112,5 @@ public class LoginController {
 	}
 
 	primaryStage.setResizable(false);
-    }
-
-    /**
-     * The method to check if input is empty to throw user-defined
-     * EmptyContentException
-     * 
-     * @param content The string to be validate
-     */
-    private void checkInputEmpty(String input) throws EmptyInputException {
-	if (input.isEmpty()) {
-	    throw new EmptyInputException();
-	}
     }
 }

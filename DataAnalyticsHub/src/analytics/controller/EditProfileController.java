@@ -81,38 +81,28 @@ public class EditProfileController {
     }
 
     /**
-     * The method to handle saving edited profile into SQLite Database. It validates
-     * username, password, first name and last input inputs.
+     * The method to handle saving edited profile into SQLite Database.
      * 
      * @param event The ActionEvent object which indicates that Save Edit
      *              button-clicked action occurred
      */
     @FXML
     public void saveProfileEditHandler(ActionEvent event) {
-	String username = usernameInputField.getText();
-	String password = passwordInputField.getText();
-	String firstName = firstNameInputField.getText();
-	String lastName = lastNameInputField.getText();
 
 	try {
-	    checkInputEmpty(username);
-	    checkInputEmpty(password);
-	    checkInputEmpty(firstName);
-	    checkInputEmpty(lastName);
+	    UserModel.getInstance().updateUser(loginUser, usernameInputField.getText(), passwordInputField.getText(),
+		    firstNameInputField.getText(), lastNameInputField.getText()); /* Update user profile */
 
-	    if (!username.equals(loginUser.getUsername())) { /* check if username exists in database */
-		UserModel.getInstance().checkUserExist(username);
-	    }
+	    this.updatedUser = new User(usernameInputField.getText(), passwordInputField.getText(),
+		    firstNameInputField.getText(), lastNameInputField.getText(), loginUser.getVip());
 
-	    checkPasswordLength(password); /* check password input length */
-
-	    this.updatedUser = new User(username, password, firstName, lastName, loginUser.getVip());
-	    UserModel.getInstance().updateUser(loginUser, updatedUser);
-	    PostModel.getInstance().updatePost(loginUser, updatedUser);
-	    Alert loginFailedAlert = new Alert(AlertType.INFORMATION);
-	    loginFailedAlert.setHeaderText("Edit Profile Success. Your new user profile is now saved.");
-	    loginFailedAlert.setContentText("Click OK to go back to dashboard.");
-	    loginFailedAlert.showAndWait();
+	    PostModel.getInstance().updatePost(loginUser, updatedUser); /* Update post's author */
+	    
+	    Alert EditProfileScucessAlert = new Alert(AlertType.INFORMATION);
+	    EditProfileScucessAlert.setHeaderText("Edit Profile Success. Your new user profile is now saved.");
+	    EditProfileScucessAlert.setContentText("Click OK to go back to dashboard.");
+	    EditProfileScucessAlert.showAndWait();
+	    
 	    redirectDashboardPageHandler(event); /* redirect to dashboard */
 	} catch (EmptyInputException e) {
 	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
@@ -181,29 +171,5 @@ public class EditProfileController {
 	}
 
 	primaryStage.setResizable(false);
-    }
-
-    /**
-     * The method to check if input is empty to throw user-defined
-     * EmptyContentException
-     * 
-     * @param content The string to be validate
-     */
-    private void checkInputEmpty(String input) throws EmptyInputException {
-	if (input.isEmpty()) {
-	    throw new EmptyInputException();
-	}
-    }
-
-    /**
-     * The method to check if input did not exceed 6 character length to throw
-     * user-defined InvalidPasswordLengthException
-     * 
-     * @param input The string to be check
-     */
-    private void checkPasswordLength(String input) throws InvalidPasswordLengthException {
-	if (input.length() < 6) {
-	    throw new InvalidPasswordLengthException();
-	}
     }
 }

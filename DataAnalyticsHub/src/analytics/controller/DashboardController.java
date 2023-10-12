@@ -283,21 +283,10 @@ public class DashboardController {
     public void addPostHandler(ActionEvent event) {
 
 	try {
-	    String id = addPostIDInputField.getText();
-	    String postAuthor = addPostAuthorLabelField.getText();
-	    String likes = addPostLikesInputField.getText();
-	    String shares = addPostSharesInputField.getText();
-	    String content = addPostContentInputField.getText();
-	    String dateTime = addPostDateTimeInputField.getText();
 
-	    int postId = readInputPostID(id); // post ID
-	    int postLikes = readInputNonNegativeInt(likes); // post number of like
-	    int postShares = readInputNonNegativeInt(shares); // post number of share
-	    String postContent = readInputContent(content); // post content
-	    String postDateTime = readInputDateTime(dateTime); // post date-time of creation
-
-	    PostModel.getInstance()
-		    .createPost(new Post(postId, postContent, postAuthor, postLikes, postShares, postDateTime));
+	    PostModel.getInstance().createPost(addPostIDInputField.getText(), addPostContentInputField.getText(),
+		    addPostAuthorLabelField.getText(), addPostLikesInputField.getText(),
+		    addPostSharesInputField.getText(), addPostDateTimeInputField.getText());
 
 	    Alert addPostSuccess = new Alert(AlertType.INFORMATION);
 	    addPostSuccess.setHeaderText("Add Post Success. Your new post is now saved.");
@@ -354,9 +343,7 @@ public class DashboardController {
 	try {
 	    retrievePostTableView.getItems().clear();
 
-	    String id = retrievePostIDInputField.getText();
-
-	    Post post = readInputRetrievePostID(id);
+	    Post post = PostModel.getInstance().validateInputRetrievePostID(retrievePostIDInputField.getText());
 
 	    if (post != null) {
 		retrievePostTableView.getItems().add(post);
@@ -400,12 +387,10 @@ public class DashboardController {
     @FXML
     public void removePostHandler(ActionEvent event) {
 	try {
-	    String id = removePostIDInputField.getText();
 
-	    Post post = readInputRetrievePostID(id);
+	    Post post = PostModel.getInstance().removePost(removePostIDInputField.getText());
 
 	    if (post != null) {
-		PostModel.getInstance().removePost(post.getId());
 		Alert removePostSuccess = new Alert(AlertType.INFORMATION);
 		removePostSuccess.setHeaderText("Remove Post Success");
 		removePostSuccess.setContentText("The post is successfully removed from the database!");
@@ -451,16 +436,17 @@ public class DashboardController {
 
 	    String strNumberPost = retrieveTopNLikesPostNumberInputField.getText();
 	    String selectedAuthor = retrieveTopNLikesPostAuthorChoiceBox.getValue();
-
-	    int intNumberPost = readInputPositiveInt(strNumberPost);
+	    int intNumberPost = 0;
 
 	    if (selectedAuthor != null) {
-		PriorityQueue<Post> topNLikesPost = PostModel.getInstance().retrieveTopNLikesPost(selectedAuthor);
+		PriorityQueue<Post> topNLikesPost = PostModel.getInstance().retrieveTopNLikesPost(strNumberPost,
+			selectedAuthor);
 
 		if (topNLikesPost.size() == 0) {
 		    NumPostExceedDatabaseLabel
 			    .setText(String.format("0 post exist in the database for %s.", selectedAuthor));
 		} else {
+		    intNumberPost = Integer.parseInt(strNumberPost);
 		    if (topNLikesPost.size() < intNumberPost) {
 			intNumberPost = topNLikesPost.size();
 			NumPostExceedDatabaseLabel.setText(
@@ -526,7 +512,7 @@ public class DashboardController {
 	try {
 	    String id = exportPostIDInputField.getText();
 
-	    Post post = readInputRetrievePostID(id);
+	    Post post = PostModel.getInstance().validateInputRetrievePostID(id);
 
 	    if (post != null) {
 		try {
@@ -626,18 +612,8 @@ public class DashboardController {
 		String[] postRow = fileRow.split(","); /* Split the row into tokens with "," as separator. */
 
 		try {
-		    int postId = readInputPostID(postRow[0]); // post ID
-		    String postContent = readInputContent(postRow[1]); // post content
-		    checkInputEmpty(postRow[2]); // post author
-		    int postLikes = readInputNonNegativeInt(postRow[3]); // post number of like
-		    int postShares = readInputNonNegativeInt(postRow[4]); // post number of share
-		    String postDateTime = readInputDateTime(postRow[5]); // post date-time of creation
-
-		    Post post = new Post(postId, postContent, postRow[2], postLikes, postShares,
-			    postDateTime); /* Create Post object. */
-
-		    PostModel.getInstance().createPost(post); /* Add Post object into postDatabase. */
-
+		    PostModel.getInstance().createPost(postRow[0], postRow[1], postRow[2], postRow[3], postRow[4],
+			    postRow[5]);
 		    postImportSuccess += 1; /* Increment postImportSuccess if import post successful. */
 
 		} catch (EmptyInputException inputEmptyError) {
@@ -709,206 +685,4 @@ public class DashboardController {
 
     }
 
-    /**
-     * The method to read user's post ID input and call readInputNonNegativeInt to
-     * validate the parsed integer format and retrieve the post based on the input
-     * from database in order to return the post object.
-     * 
-     * @param text The text to be print to prompt user's input
-     * @return post The post object retrieve from database based on post's ID input
-     */
-    private Post readInputRetrievePostID(String input)
-	    throws EmptyInputException, InvalidNegativeIntegerException, NumberFormatException {
-	int postID = 0;
-	Post post;
-	try {
-	    input = input.trim();
-	    postID = readInputNonNegativeInt(input);
-	    post = PostModel.getInstance().retrievePost(postID);
-	} catch (EmptyInputException inputEmptyError) {
-	    throw inputEmptyError;
-	} catch (NumberFormatException numberFormatError) {
-	    throw numberFormatError;
-	} catch (InvalidNegativeIntegerException integerNegativeError) {
-	    throw integerNegativeError;
-	}
-
-	return post;
-    }
-
-    /**
-     * The method to read user's post ID input and call readInputNonNegativeInt to
-     * validate the parsed integer format and check if post ID already existed in
-     * database in order to return the non-exist post ID integer.
-     * 
-     * @param text The text to be print to prompt user's input
-     * @return the the non-exist post ID integer input
-     * @throws ExistedPostIDException
-     * @throws EmptyInputException
-     * @throws InvalidNegativeIntegerException
-     */
-    private int readInputPostID(String input)
-	    throws ExistedPostIDException, EmptyInputException, InvalidNegativeIntegerException {
-	int postID = 0;
-	try {
-	    input = input.trim();
-	    postID = readInputNonNegativeInt(input);
-	    PostModel.getInstance().checkPostIDExist(postID);
-	} catch (EmptyInputException inputEmptyError) {
-	    throw inputEmptyError;
-	} catch (NumberFormatException numberFormatError) {
-	    throw numberFormatError;
-	} catch (InvalidNegativeIntegerException integerNegativeError) {
-	    throw integerNegativeError;
-	} catch (ExistedPostIDException postIDExisted) {
-	    throw postIDExisted;
-	}
-
-	return postID;
-    }
-
-    /**
-     * The method to read post's content input and validate the content format in
-     * order to return the valid content.
-     * 
-     * @param text        The text to be print to prompt user's input
-     * @param inputStream The source which the input will be read from
-     * @return the valid post's content input
-     * @throws EmptyInputException
-     * @throws InvalidContentException
-     */
-    private String readInputContent(String input) throws EmptyInputException, InvalidContentException {
-	try {
-	    input = input.trim();
-	    checkInputEmpty(input);
-	    checkContentFormat(input);
-	} catch (EmptyInputException inputEmptyError) {
-	    throw inputEmptyError;
-	} catch (InvalidContentException contentFormatError) {
-	    throw new InvalidContentException();
-	}
-	return input;
-    }
-
-    /**
-     * The method to read user's string input and validate the parsed integer format
-     * in order to return the valid non-negative parsed integer.
-     * 
-     * @param text        The text to be print to prompt user's input
-     * @param inputStream The source which the input will be read from
-     * @return the valid parsed non-negative integer input
-     * @throws EmptyInputException
-     * @throws InvalidNegativeIntegerException
-     */
-    private int readInputNonNegativeInt(String input)
-	    throws EmptyInputException, NumberFormatException, InvalidNegativeIntegerException {
-	int intInput = 0;
-	try {
-	    checkInputEmpty(input);
-	    intInput = Integer.parseInt(input);
-	    checkNonNegativeIntegerFormat(intInput);
-	} catch (EmptyInputException inputEmptyError) {
-	    throw inputEmptyError;
-	} catch (NumberFormatException numberFormatError) {
-	    throw new NumberFormatException();
-	} catch (InvalidNegativeIntegerException integerNegativeError) {
-	    throw integerNegativeError;
-	}
-
-	return intInput;
-    }
-
-    private int readInputPositiveInt(String input)
-	    throws EmptyInputException, NumberFormatException, InvalidNonPositiveIntegerException {
-	int intInput = 0;
-	try {
-	    input = input.trim();
-	    checkInputEmpty(input);
-	    intInput = Integer.parseInt(input);
-	    checkPositiveIntegerFormat(intInput);
-	} catch (EmptyInputException inputEmptyError) {
-	    throw inputEmptyError;
-	} catch (NumberFormatException numberFormatError) {
-	    throw new NumberFormatException();
-	} catch (InvalidNonPositiveIntegerException integerNonPositiveError) {
-	    throw integerNonPositiveError;
-	}
-
-	return intInput;
-    }
-
-    /**
-     * The method to read post's date-time input and validate the date-time format
-     * in order to return the valid date-time.
-     * 
-     * @param text        The text to be print to prompt user's input
-     * @param inputStream The source which the input will be read from
-     * @return the valid post's date-time format
-     * @throws EmptyInputException
-     */
-    private String readInputDateTime(String input) throws EmptyInputException, ParseException {
-	// Note that SimpleDateFormat class and methods are adapted from:
-	// https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html
-	SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-	dateFormat.setLenient(false);
-	try {
-	    input = input.trim();
-	    checkInputEmpty(input);
-	    Date date = dateFormat.parse(input);
-	    input = dateFormat.format(date);
-	} catch (EmptyInputException inputEmptyError) {
-	    throw inputEmptyError;
-	} catch (ParseException parseError) {
-	    throw new ParseException(input, 0);
-	}
-	return input;
-    }
-
-    /**
-     * The method to check if input is empty to throw user-defined
-     * EmptyContentException
-     * 
-     * @param content The string to be validate
-     */
-    private void checkInputEmpty(String input) throws EmptyInputException {
-	if (input.isEmpty()) {
-	    throw new EmptyInputException();
-	}
-    }
-
-    /**
-     * The method to check if content contains "," to throw user-defined
-     * InvalidContentException
-     * 
-     * @param content The string to be validate
-     */
-    private void checkContentFormat(String content) throws InvalidContentException {
-	if (content.contains(",")) {
-	    throw new InvalidContentException();
-	}
-    }
-
-    /**
-     * The method to check if integer is negative to throw user-defined
-     * InvalidNegativeIntegerException
-     * 
-     * @param integer The integer to be validate
-     */
-    private void checkNonNegativeIntegerFormat(int integer) throws InvalidNegativeIntegerException {
-	if (integer < 0) {
-	    throw new InvalidNegativeIntegerException(integer);
-	}
-    }
-
-    /**
-     * The method to check if integer is negative or zero to throw user-defined
-     * InvalidNegativeIntegerException
-     * 
-     * @param integer The integer to be validate
-     */
-    private void checkPositiveIntegerFormat(int integer) throws InvalidNonPositiveIntegerException {
-	if (integer <= 0) {
-	    throw new InvalidNonPositiveIntegerException(integer);
-	}
-    }
 }

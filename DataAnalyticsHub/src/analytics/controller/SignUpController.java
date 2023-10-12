@@ -56,29 +56,17 @@ public class SignUpController {
     }
 
     /**
-     * The method to handle user login. It validates username, password, first name
-     * and last input inputs.
+     * The method to handle user login.
      * 
      * @param event The ActionEvent object which indicates that Sign Up
      *              button-clicked action occurred
      */
     @FXML
     public void signUpUserHandler(ActionEvent event) {
-	String username = usernameInputField.getText();
-	String password = passwordInputField.getText();
-	String firstName = firstNameInputField.getText();
-	String lastName = lastNameInputField.getText();
-
 	try {
-	    checkInputEmpty(username);
-	    checkInputEmpty(password);
-	    checkInputEmpty(firstName);
-	    checkInputEmpty(lastName);
-	    UserModel.getInstance().checkUserExist(username); /* checks if username already exists in SQLite Database */
-	    checkPasswordLength(password); /* checks password length */
-
-	    UserModel.getInstance().createUser(new User(username, password, firstName, lastName,
-		    0)); /* create new user profile record in SQLite Database */
+	    UserModel.getInstance().createUser(usernameInputField.getText(), passwordInputField.getText(),
+		    firstNameInputField.getText(),
+		    lastNameInputField.getText()); /* create new user profile record in SQLite Database */
 
 	    Alert SignUpSuccessAlert = new Alert(AlertType.INFORMATION);
 	    SignUpSuccessAlert.setHeaderText("Sign Up Success. Your user profile is created.");
@@ -127,29 +115,5 @@ public class SignUpController {
 	}
 
 	primaryStage.setResizable(false);
-    }
-
-    /**
-     * The method to check if input is empty to throw user-defined
-     * EmptyContentException
-     * 
-     * @param content The string to be validate
-     */
-    private void checkInputEmpty(String input) throws EmptyInputException {
-	if (input.isEmpty()) {
-	    throw new EmptyInputException();
-	}
-    }
-
-    /**
-     * The method to check if input did not exceed 6 character length to throw
-     * user-defined InvalidPasswordLengthException
-     * 
-     * @param input The string to be check
-     */
-    private void checkPasswordLength(String input) throws InvalidPasswordLengthException {
-	if (input.length() < 6) {
-	    throw new InvalidPasswordLengthException();
-	}
     }
 }

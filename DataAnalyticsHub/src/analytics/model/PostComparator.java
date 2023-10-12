@@ -12,7 +12,6 @@
  */
 package analytics.model;
 
-import java.io.IOException;
 import java.util.Comparator;
 
 /**
