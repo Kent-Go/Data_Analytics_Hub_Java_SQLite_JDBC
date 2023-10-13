@@ -87,3 +87,4 @@ To run, click the ```Apply``` button followed by the ```Run``` button.
   - ```EditProfileController```: Serves as the controller for the Edit Profile logic.
   - ```LoginController```: Serves as the controller for the Login logic.
   - ```SignUpController```: Serves as the controller for the Sign Up logic.
+  - ```AlertPopUp```: Provides methods to create error, information and confirmation alert.
