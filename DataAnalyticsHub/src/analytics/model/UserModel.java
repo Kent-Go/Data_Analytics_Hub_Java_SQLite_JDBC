@@ -102,7 +102,7 @@ public class UserModel {
 
 	    checkUserExist(validatedUsername); /* checks if username already exists in SQLite Database */
 
-	    validator.checkPasswordLength(password); /* checks password length */
+	    validator.checkPasswordLength(validatedPassword); /* checks password length */
 
 	    userDatabaseHandler.createUser(new User(validatedUsername, validatedPassword, validatedFirstName,
 		    validatedLastName, 0)); /* create new user profile record in SQLite Database */
