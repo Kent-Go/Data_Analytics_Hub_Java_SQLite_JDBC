@@ -18,7 +18,7 @@ package analytics.model.exceptions;
  * non-positive integer.
  */
 public class InvalidNonPositiveIntegerException extends Exception {
-    public InvalidNonPositiveIntegerException(int integer) {
-	super(String.format("Invalid response. %d is negative or zero. Response must be positive. Please try again!", integer));
+    public InvalidNonPositiveIntegerException(int integer, String inputField) {
+	super(String.format("Invalid %s input. %d is negative or zero. Response must be positive. Please try again!", inputField, integer));
     }
 }

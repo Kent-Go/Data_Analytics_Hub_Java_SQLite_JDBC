@@ -19,7 +19,7 @@ package analytics.model.exceptions;
  * negative integer.
  */
 public class InvalidNegativeIntegerException extends Exception {
-    public InvalidNegativeIntegerException(int integer) {
-	super(String.format("Invalid response. %d is negative. Response cannot be negative. Please try again!", integer));
+    public InvalidNegativeIntegerException(int integer, String inputField) {
+	super(String.format("Invalid %s input. %d is negative. Response cannot be negative. Please try again!", inputField, integer));
     }
 }

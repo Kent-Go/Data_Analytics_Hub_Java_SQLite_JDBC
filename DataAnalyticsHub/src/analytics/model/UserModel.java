@@ -68,8 +68,8 @@ public class UserModel {
      */
     public User verifyUser(String username, String password) throws UserVerificationFailException, EmptyInputException {
 	try {
-	    String validatedUsername = validator.checkInputEmpty(username);
-	    String validatedPassword = validator.checkInputEmpty(password);
+	    String validatedUsername = validator.checkInputEmpty(username, "Username");
+	    String validatedPassword = validator.checkInputEmpty(password, "Password");
 	    return userDatabaseHandler.verifyUser(validatedUsername, validatedPassword);
 	} catch (EmptyInputException e) {
 	    throw e;
@@ -95,10 +95,10 @@ public class UserModel {
 	    throws EmptyInputException, UsernameExistedException, InvalidPasswordLengthException {
 
 	try {
-	    String validatedUsername = validator.checkInputEmpty(username);
-	    String validatedPassword = validator.checkInputEmpty(password);
-	    String validatedFirstName = validator.checkInputEmpty(firstName);
-	    String validatedLastName = validator.checkInputEmpty(lastName);
+	    String validatedUsername = validator.checkInputEmpty(username, "Username");
+	    String validatedPassword = validator.checkInputEmpty(password, "Password");
+	    String validatedFirstName = validator.checkInputEmpty(firstName, "First Name");
+	    String validatedLastName = validator.checkInputEmpty(lastName, "Last Name");
 
 	    checkUserExist(validatedUsername); /* checks if username already exists in SQLite Database */
 
@@ -136,10 +136,10 @@ public class UserModel {
 	    throws EmptyInputException, UsernameExistedException, InvalidPasswordLengthException {
 
 	try {
-	    String validatedUsername = validator.checkInputEmpty(username);
-	    String validatedPassword = validator.checkInputEmpty(password);
-	    String validatedFirstName = validator.checkInputEmpty(firstName);
-	    String validatedLastName = validator.checkInputEmpty(lastName);
+	    String validatedUsername = validator.checkInputEmpty(username, "Username");
+	    String validatedPassword = validator.checkInputEmpty(password, "Password");
+	    String validatedFirstName = validator.checkInputEmpty(firstName, "First Name");
+	    String validatedLastName = validator.checkInputEmpty(lastName, "Last Name");
 
 	    if (!validatedUsername.equals(outdatedUser.getUsername())) { /* check if username exists in database */
 		checkUserExist(validatedUsername);

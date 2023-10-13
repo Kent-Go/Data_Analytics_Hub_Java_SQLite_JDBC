@@ -13,7 +13,8 @@ package analytics.model.exceptions;
 
 /**
  * 
- * The UsernameExistedException class is a user-defined exception for existed username.
+ * The UsernameExistedException class is a user-defined exception for existed
+ * username in SQLite Database.
  */
 public class UsernameExistedException extends Exception {
     public UsernameExistedException() {

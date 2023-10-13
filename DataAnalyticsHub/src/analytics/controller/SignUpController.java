@@ -12,7 +12,6 @@
  */
 package analytics.controller;
 
-import analytics.model.User;
 import analytics.view.LoginViewer;
 import analytics.model.UserModel;
 import analytics.model.exceptions.EmptyInputException;
@@ -24,7 +23,6 @@ import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -68,27 +66,20 @@ public class SignUpController {
 		    firstNameInputField.getText(),
 		    lastNameInputField.getText()); /* create new user profile record in SQLite Database */
 
-	    Alert SignUpSuccessAlert = new Alert(AlertType.INFORMATION);
-	    SignUpSuccessAlert.setHeaderText("Sign Up Success. Your user profile is created.");
-	    SignUpSuccessAlert.setContentText("Click OK to proceed to login.");
+	    Alert SignUpSuccessAlert = AlertPopUp.getInstance()
+		    .showInfoAlert("Sign Up Success. Your user profile is created.", "Click OK to proceed to login.");
 	    SignUpSuccessAlert.showAndWait();
 
 	    redirectLoginPageHandler(event); /* redirect the user to login scene */
 	} catch (EmptyInputException e) {
-	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
-	    loginFailedAlert.setHeaderText("Sign Up Failed");
-	    loginFailedAlert.setContentText(e.getMessage());
-	    loginFailedAlert.show();
+	    Alert signUpFailedAlert = AlertPopUp.getInstance().showErrorAlert("Sign Up Failed", e.getMessage());
+	    signUpFailedAlert.show();
 	} catch (UsernameExistedException e) {
-	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
-	    loginFailedAlert.setHeaderText("Sign Up Failed");
-	    loginFailedAlert.setContentText(e.getMessage());
-	    loginFailedAlert.show();
+	    Alert signUpFailedAlert = AlertPopUp.getInstance().showErrorAlert("Sign Up Failed", e.getMessage());
+	    signUpFailedAlert.show();
 	} catch (InvalidPasswordLengthException e) {
-	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
-	    loginFailedAlert.setHeaderText("Sign Up Failed");
-	    loginFailedAlert.setContentText(e.getMessage());
-	    loginFailedAlert.show();
+	    Alert signUpFailedAlert = AlertPopUp.getInstance().showErrorAlert("Sign Up Failed", e.getMessage());
+	    signUpFailedAlert.show();
 	}
     }
 
@@ -108,9 +99,8 @@ public class SignUpController {
 	try {
 	    primaryStage.setScene(loginViewer.getScene());
 	} catch (IOException e) {
-	    Alert fileLoadingErrorAlert = new Alert(AlertType.ERROR);
-	    fileLoadingErrorAlert.setHeaderText("Fail loading LoginView.fxml");
-	    fileLoadingErrorAlert.setContentText("LoginView.fxml file path is not found");
+	    Alert fileLoadingErrorAlert = AlertPopUp.getInstance().showErrorAlert("Fail loading LoginView.fxml",
+		    "LoginView.fxml file path is not found");
 	    fileLoadingErrorAlert.show();
 	}
 

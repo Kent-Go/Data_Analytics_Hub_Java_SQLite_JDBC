@@ -25,8 +25,8 @@ import javafx.scene.chart.PieChart;
 
 /**
  * 
- * The PostDatabaseHandler class serves as the post-related SQL query handler for the SQLite
- * Database in Data Analytics Hub application.
+ * The PostDatabaseHandler class provides CRUD methods for post-related SQL
+ * query to access SQLite Database in Data Analytics Hub application.
  */
 public class PostDatabaseHandler {
 

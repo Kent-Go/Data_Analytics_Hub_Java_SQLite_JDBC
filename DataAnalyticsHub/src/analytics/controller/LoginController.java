@@ -23,7 +23,6 @@ import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -71,21 +70,14 @@ public class LoginController {
 	    primaryStage.setScene(dashboardViewer.getScene(loginUser));
 	    primaryStage.setResizable(false);
 	} catch (EmptyInputException e) {
-	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
-	    loginFailedAlert.setHeaderText("Login Failed");
-	    loginFailedAlert.setContentText(e.getMessage());
+	    Alert loginFailedAlert = AlertPopUp.getInstance().showErrorAlert("Login Failed", e.getMessage());
 	    loginFailedAlert.show();
 	} catch (UserVerificationFailException e) {
-	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
-	    loginFailedAlert.setHeaderText("Login Failed");
-	    loginFailedAlert.setContentText(e.getMessage());
+	    Alert loginFailedAlert = AlertPopUp.getInstance().showErrorAlert("Login Failed", e.getMessage());
 	    loginFailedAlert.show();
 	} catch (IOException e) {
-	    e.printStackTrace();
-	    Alert fileLoadingErrorAlert = new Alert(AlertType.ERROR);
-	    fileLoadingErrorAlert.setHeaderText("Fail loading LoginView.fxml");
-	    fileLoadingErrorAlert.setContentText("LoginView.fxml file path is not found");
-	    fileLoadingErrorAlert.show();
+	    Alert loginFailedAlert = AlertPopUp.getInstance().showErrorAlert("Login Failed", e.getMessage());
+	    loginFailedAlert.show();
 	}
     }
 
@@ -105,9 +97,8 @@ public class LoginController {
 	try {
 	    primaryStage.setScene(signUpViewer.getScene());
 	} catch (IOException e) {
-	    Alert fileLoadingErrorAlert = new Alert(AlertType.ERROR);
-	    fileLoadingErrorAlert.setHeaderText("Fail loading SignUpView.fxml");
-	    fileLoadingErrorAlert.setContentText("SignUpView.fxml file path is not found");
+	    Alert fileLoadingErrorAlert = AlertPopUp.getInstance().showErrorAlert("Fail loading SignUpView.fxml",
+		    "SignUpView.fxml file path is not found");
 	    fileLoadingErrorAlert.show();
 	}
 

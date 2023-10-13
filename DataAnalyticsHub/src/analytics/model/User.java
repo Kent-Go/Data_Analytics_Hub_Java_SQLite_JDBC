@@ -16,7 +16,7 @@ package analytics.model;
  * 
  * The User class serves as a User object with properties include username, password,
  * firstName, lastName and vip. It provides getter methods to access the
- * Post's private instance variables.
+ * User's private instance variables.
  */
 public class User {
     // Declaration of User's Instance Variables (private)

@@ -20,8 +20,8 @@ import analytics.model.exceptions.*;
 
 /**
  * 
- * The Validator class serves as the validation checker for all inputs entered
- * by users in Data Analytics Hub application.
+ * The Validator class provide validation logics for user and post related
+ * inputs entered by users in Data Analytics Hub application.
  */
 public class Validator {
     /**
@@ -30,9 +30,9 @@ public class Validator {
      * 
      * @param content The string to be validate
      */
-    public String checkInputEmpty(String input) throws EmptyInputException {
+    public String checkInputEmpty(String input, String inputField) throws EmptyInputException {
 	if (input.isEmpty()) {
-	    throw new EmptyInputException();
+	    throw new EmptyInputException(inputField);
 	}
 	return input;
     }
@@ -65,7 +65,7 @@ public class Validator {
 	int postID = 0;
 	try {
 	    input = input.trim();
-	    postID = readInputNonNegativeInt(input);
+	    postID = readInputNonNegativeInt(input, "Post ID");
 	    PostModel.getInstance().checkPostIDExist(postID);
 	} catch (EmptyInputException inputEmptyError) {
 	    throw inputEmptyError;
@@ -81,33 +81,6 @@ public class Validator {
     }
 
     /**
-     * The method to read user's post ID input and call readInputNonNegativeInt to
-     * validate the parsed integer format and retrieve the post based on the input
-     * from database in order to return the post object.
-     * 
-     * @param text The text to be print to prompt user's input
-     * @return post The post object retrieve from database based on post's ID input
-     */
-    public Post readInputRetrievePostID(String input)
-	    throws EmptyInputException, InvalidNegativeIntegerException, NumberFormatException {
-	int postID = 0;
-	Post post;
-	try {
-	    input = input.trim();
-	    postID = readInputNonNegativeInt(input);
-	    post = PostModel.getInstance().retrievePost(postID);
-	} catch (EmptyInputException inputEmptyError) {
-	    throw inputEmptyError;
-	} catch (NumberFormatException numberFormatError) {
-	    throw numberFormatError;
-	} catch (InvalidNegativeIntegerException integerNegativeError) {
-	    throw integerNegativeError;
-	}
-
-	return post;
-    }
-
-    /**
      * The method to read post's content input and validate the content format in
      * order to return the valid content.
      * 
@@ -120,7 +93,7 @@ public class Validator {
     public String readInputContent(String input) throws EmptyInputException, InvalidContentException {
 	try {
 	    input = input.trim();
-	    checkInputEmpty(input);
+	    checkInputEmpty(input, "Content");
 	    checkContentFormat(input);
 	} catch (EmptyInputException inputEmptyError) {
 	    throw inputEmptyError;
@@ -130,18 +103,18 @@ public class Validator {
 	return input;
     }
 
-    public int readInputPositiveInt(String input)
+    public int readInputPositiveInt(String input, String inputField)
 	    throws EmptyInputException, NumberFormatException, InvalidNonPositiveIntegerException {
 	int intInput = 0;
 	try {
 	    input = input.trim();
-	    checkInputEmpty(input);
+	    checkInputEmpty(input, inputField);
 	    intInput = Integer.parseInt(input);
-	    checkPositiveIntegerFormat(intInput);
+	    checkPositiveIntegerFormat(intInput, inputField);
 	} catch (EmptyInputException inputEmptyError) {
 	    throw inputEmptyError;
 	} catch (NumberFormatException numberFormatError) {
-	    throw new NumberFormatException();
+	    throw new NumberFormatException(String.format("%s input is invalid. Input must be an integer.", inputField));
 	} catch (InvalidNonPositiveIntegerException integerNonPositiveError) {
 	    throw integerNonPositiveError;
 	}
@@ -165,7 +138,7 @@ public class Validator {
 	dateFormat.setLenient(false);
 	try {
 	    input = input.trim();
-	    checkInputEmpty(input);
+	    checkInputEmpty(input, "DateTime");
 	    Date date = dateFormat.parse(input);
 	    input = dateFormat.format(date);
 	} catch (EmptyInputException inputEmptyError) {
@@ -186,17 +159,17 @@ public class Validator {
      * @throws EmptyInputException
      * @throws InvalidNegativeIntegerException
      */
-    public int readInputNonNegativeInt(String input)
+    public int readInputNonNegativeInt(String input, String inputField)
 	    throws EmptyInputException, NumberFormatException, InvalidNegativeIntegerException {
 	int intInput = 0;
 	try {
-	    checkInputEmpty(input);
+	    checkInputEmpty(input, inputField);
 	    intInput = Integer.parseInt(input);
-	    checkNonNegativeIntegerFormat(intInput);
+	    checkNonNegativeIntegerFormat(intInput, inputField);
 	} catch (EmptyInputException inputEmptyError) {
 	    throw inputEmptyError;
 	} catch (NumberFormatException numberFormatError) {
-	    throw new NumberFormatException();
+	    throw new NumberFormatException(String.format("%s input is invalid. Input must be an integer.", inputField));
 	} catch (InvalidNegativeIntegerException integerNegativeError) {
 	    throw integerNegativeError;
 	}
@@ -222,9 +195,9 @@ public class Validator {
      * 
      * @param integer The integer to be validate
      */
-    public void checkNonNegativeIntegerFormat(int integer) throws InvalidNegativeIntegerException {
+    public void checkNonNegativeIntegerFormat(int integer, String inputField) throws InvalidNegativeIntegerException {
 	if (integer < 0) {
-	    throw new InvalidNegativeIntegerException(integer);
+	    throw new InvalidNegativeIntegerException(integer, inputField);
 	}
     }
 
@@ -234,9 +207,9 @@ public class Validator {
      * 
      * @param integer The integer to be validate
      */
-    public void checkPositiveIntegerFormat(int integer) throws InvalidNonPositiveIntegerException {
+    public void checkPositiveIntegerFormat(int integer, String inputField) throws InvalidNonPositiveIntegerException {
 	if (integer <= 0) {
-	    throw new InvalidNonPositiveIntegerException(integer);
+	    throw new InvalidNonPositiveIntegerException(integer, inputField);
 	}
     }
 }

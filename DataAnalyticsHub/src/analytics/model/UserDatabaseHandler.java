@@ -24,8 +24,8 @@ import javafx.collections.ObservableList;
 
 /**
  * 
- * The UserDatabaseHandler class serves as the user-related SQL query handler for the SQLite
- * Database in Data Analytics Hub application.
+ * The UserDatabaseHandler class provides CRUD methods for user-related SQL
+ * query to access SQLite Database in Data Analytics Hub application.
  */
 public class UserDatabaseHandler {
 

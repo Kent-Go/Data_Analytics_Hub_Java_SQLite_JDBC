@@ -76,12 +76,13 @@ public class PostModel {
 
 	try {
 	    int postId = validator.readInputPostID(id); // post ID
-	    int postLikes = validator.readInputNonNegativeInt(likes); // post number of like
-	    int postShares = validator.readInputNonNegativeInt(shares); // post number of share
+	    int postLikes = validator.readInputNonNegativeInt(likes, "Number of Like"); // post number of like
+	    int postShares = validator.readInputNonNegativeInt(shares, "Number of Share"); // post number of share
 	    String postContent = validator.readInputContent(content); // post content
+	    String postAuthor = validator.checkInputEmpty(author, "Author"); // post author
 	    String postDateTime = validator.readInputDateTime(dateTime); // post date-time of creation
 
-	    Post post = new Post(postId, postContent, author, postLikes, postShares, postDateTime);
+	    Post post = new Post(postId, postContent, postAuthor, postLikes, postShares, postDateTime);
 
 	    postDatabaseHandler.createPost(post);
 	} catch (EmptyInputException e) {
@@ -98,27 +99,6 @@ public class PostModel {
     }
 
     /**
-     * The method to call readInputRetrievePostID method from validator to get the
-     * Post object.
-     * 
-     * @param id The post ID to be use to retrieve the post
-     * @return post The post object retrieve from id
-     */
-    public Post validateInputRetrievePostID(String id) throws EmptyInputException, InvalidNegativeIntegerException {
-	Post post = null;
-	try {
-	    post = validator.readInputRetrievePostID(id);
-	} catch (NumberFormatException e) {
-	    throw e;
-	} catch (EmptyInputException e) {
-	    throw e;
-	} catch (InvalidNegativeIntegerException e) {
-	    throw e;
-	}
-	return post;
-    }
-
-    /**
      * The method to call updatePost method in postDatabaseHandler to update an
      * existing post in SQLite Database.
      * 
@@ -132,8 +112,8 @@ public class PostModel {
     }
 
     /**
-     * The method to call checkPostIDExist method in postDatabaseHandler to check if
-     * post's ID already existed in SQLite Database
+     * The method for Validator to call checkPostIDExist method in
+     * postDatabaseHandler to check if post's ID already existed in SQLite Database
      * 
      * @param postID The post's ID integer input to check
      */
@@ -150,23 +130,14 @@ public class PostModel {
      * post from SQLite Database
      * 
      * @param postID The post's ID integer input to be retrieve
+     * @throws EmptyInputException
+     * @throws InvalidNegativeIntegerException
      */
-    public Post retrievePost(int postID) {
-	return postDatabaseHandler.retrievePost(postID);
-    }
-
-    /**
-     * The method to call removePost method in postDatabaseHandler to remove the
-     * post from SQLite Database
-     * 
-     * @param postID The post's ID integer input to be remove
-     * @throws EmptyInputException, InvalidNegativeIntegerException
-     */
-    public Post removePost(String postID) throws EmptyInputException, InvalidNegativeIntegerException {
-	Post post;
+    public Post retrievePost(String postID) throws EmptyInputException, InvalidNegativeIntegerException {
 	try {
-	    post = validator.readInputRetrievePostID(postID);
-	    postDatabaseHandler.removePost(post.getId());
+	    int intInput = validator.readInputNonNegativeInt(postID, "Post ID");
+
+	    return postDatabaseHandler.retrievePost(intInput);
 	} catch (NumberFormatException e) {
 	    throw e;
 	} catch (EmptyInputException e) {
@@ -174,8 +145,34 @@ public class PostModel {
 	} catch (InvalidNegativeIntegerException e) {
 	    throw e;
 	}
-	return post;
+    }
 
+    /**
+     * The method to call removePost method in postDatabaseHandler to remove the
+     * post from SQLite Database
+     * 
+     * @param postID The post's ID integer input to be remove
+     * @throws EmptyInputException,   InvalidNegativeIntegerException
+     * @throws ExistedPostIDException
+     */
+    public boolean removePost(String postID) throws EmptyInputException, InvalidNegativeIntegerException {
+	int id = 0;
+	try {
+
+	    id = validator.readInputPostID(postID);
+
+	} catch (NumberFormatException e) {
+	    throw e;
+	} catch (EmptyInputException e) {
+	    throw e;
+	} catch (InvalidNegativeIntegerException e) {
+	    throw e;
+	} catch (ExistedPostIDException e) {
+	    id = Integer.parseInt(postID);
+	    postDatabaseHandler.removePost(id);
+	    return true;
+	}
+	return false;
     }
 
     /**
@@ -193,7 +190,7 @@ public class PostModel {
 
 	PriorityQueue<Post> topNLikesPostQueue = null;
 	try {
-	    int intNumberPost = validator.readInputPositiveInt(numPost);
+	    int intNumberPost = validator.readInputPositiveInt(numPost, "Number of Post");
 
 	    if (author.equals("All Users")) {
 		topNLikesPostQueue = postDatabaseHandler.retrieveTopNLikesPostAllUsers();

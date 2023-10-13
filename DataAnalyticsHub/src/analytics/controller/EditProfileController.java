@@ -97,28 +97,25 @@ public class EditProfileController {
 		    firstNameInputField.getText(), lastNameInputField.getText(), loginUser.getVip());
 
 	    PostModel.getInstance().updatePost(loginUser, updatedUser); /* Update post's author */
-	    
-	    Alert EditProfileScucessAlert = new Alert(AlertType.INFORMATION);
-	    EditProfileScucessAlert.setHeaderText("Edit Profile Success. Your new user profile is now saved.");
-	    EditProfileScucessAlert.setContentText("Click OK to go back to dashboard.");
+
+	    Alert EditProfileScucessAlert = AlertPopUp.getInstance().showInfoAlert(
+		    "Edit Profile Success. Your new user profile is now saved.", "Click OK to go back to dashboard.");
 	    EditProfileScucessAlert.showAndWait();
-	    
+
 	    redirectDashboardPageHandler(event); /* redirect to dashboard */
 	} catch (EmptyInputException e) {
-	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
-	    loginFailedAlert.setHeaderText("Edit Profile Failed");
-	    loginFailedAlert.setContentText(e.getMessage());
-	    loginFailedAlert.show();
+
+	    Alert editProfileFailedAlert = AlertPopUp.getInstance().showErrorAlert("Edit Profile Failed",
+		    e.getMessage());
+	    editProfileFailedAlert.show();
 	} catch (UsernameExistedException e) {
-	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
-	    loginFailedAlert.setHeaderText("Edit Profile Failed");
-	    loginFailedAlert.setContentText(e.getMessage());
-	    loginFailedAlert.show();
+	    Alert editProfileFailedAlert = AlertPopUp.getInstance().showErrorAlert("Edit Profile Failed",
+		    e.getMessage());
+	    editProfileFailedAlert.show();
 	} catch (InvalidPasswordLengthException e) {
-	    Alert loginFailedAlert = new Alert(AlertType.ERROR);
-	    loginFailedAlert.setHeaderText("Edit Profile Failed");
-	    loginFailedAlert.setContentText(e.getMessage());
-	    loginFailedAlert.show();
+	    Alert editProfileFailedAlert = AlertPopUp.getInstance().showErrorAlert("Edit Profile Failed",
+		    e.getMessage());
+	    editProfileFailedAlert.show();
 	}
     }
 
@@ -139,9 +136,8 @@ public class EditProfileController {
 	try {
 	    primaryStage.setScene(dashboardViewer.getScene(updatedUser));
 	} catch (IOException e) {
-	    Alert fileLoadingErrorAlert = new Alert(AlertType.ERROR);
-	    fileLoadingErrorAlert.setHeaderText("Fail loading LoginView.fxml");
-	    fileLoadingErrorAlert.setContentText("LoginView.fxml file path is not found");
+	    Alert fileLoadingErrorAlert = AlertPopUp.getInstance().showErrorAlert("Fail loading DashboardView.fxml",
+		    "DashboardView.fxml file path is not found");
 	    fileLoadingErrorAlert.show();
 	}
 
@@ -164,9 +160,8 @@ public class EditProfileController {
 	try {
 	    primaryStage.setScene(dashboardViewer.getScene(loginUser));
 	} catch (IOException e) {
-	    Alert fileLoadingErrorAlert = new Alert(AlertType.ERROR);
-	    fileLoadingErrorAlert.setHeaderText("Fail loading LoginView.fxml");
-	    fileLoadingErrorAlert.setContentText("LoginView.fxml file path is not found");
+	    Alert fileLoadingErrorAlert = AlertPopUp.getInstance().showErrorAlert("Fail loading LoginView.fxml",
+		    "LoginView.fxml file path is not found");
 	    fileLoadingErrorAlert.show();
 	}
 
