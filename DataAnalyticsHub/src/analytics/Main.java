@@ -55,13 +55,17 @@ public class Main extends Application {
 	    fileLoadingErrorAlert.show();
 	}
 	primaryStage.setResizable(false);
-	
+
 	primaryStage.show();
 
 	/* Set primaryStage at the center of the screen */
+	/*
+	 * The method is learned and adapted from:
+	 * http://www.java2s.com/example/java/javafx/center-javafx-stage.html
+	 */
 	Rectangle2D screenVisualBounds = Screen.getPrimary().getVisualBounds();
-        primaryStage.setY((screenVisualBounds.getHeight() - primaryStage.getHeight()) / 2);
-        primaryStage.setX((screenVisualBounds.getWidth() - primaryStage.getWidth()) / 2);
+	primaryStage.setY((screenVisualBounds.getHeight() - primaryStage.getHeight()) / 2);
+	primaryStage.setX((screenVisualBounds.getWidth() - primaryStage.getWidth()) / 2);
     }
 
 }
