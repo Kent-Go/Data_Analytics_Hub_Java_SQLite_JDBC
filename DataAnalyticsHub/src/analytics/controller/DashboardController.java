@@ -34,6 +34,7 @@ import analytics.view.LoginViewer;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -48,6 +49,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
 
@@ -202,9 +204,14 @@ public class DashboardController {
 	    primaryStage.setTitle(editProfileViewer.getTitle());
 	    primaryStage.setScene(editProfileViewer.getScene(loginUser));
 	    primaryStage.setResizable(false);
+	    /* Set primaryStage at the center of the screen */
+	    Rectangle2D screenVisualBounds = Screen.getPrimary().getVisualBounds();
+	    primaryStage.setY((screenVisualBounds.getHeight() - primaryStage.getHeight()) / 2);
+	    primaryStage.setX((screenVisualBounds.getWidth() - primaryStage.getWidth()) / 2);
 	} catch (IOException e) {
 	    Alert fileLoadingErrorAlert = AlertPopUp.getInstance().showErrorAlert("Fail loading EditProfileView.fxml",
 		    "EditProfileView.fxml file path is not found");
+	    fileLoadingErrorAlert.initOwner(primaryStage);
 	    fileLoadingErrorAlert.show();
 	}
     }
@@ -219,6 +226,7 @@ public class DashboardController {
     public void upgradeToVipHandler(ActionEvent event) {
 	Alert upgradeVipConfirnmationAlert = AlertPopUp.getInstance().showConfirmAlert("Upgrade To VIP",
 		"Would you like to subscribe to the application for a monthly fee of $0?");
+	upgradeVipConfirnmationAlert.initOwner(primaryStage);
 	upgradeVipConfirnmationAlert.showAndWait().ifPresent(buttonClicked -> {
 	    if (buttonClicked == ButtonType.OK) {
 		UserModel.getInstance().upgradeUserToVip(loginUser);
@@ -242,6 +250,7 @@ public class DashboardController {
     public void logOutUserHandler(ActionEvent event) {
 	Alert logOutSuccessAlert = AlertPopUp.getInstance().showInfoAlert("You are now logged out.",
 		"Click OK to proceed to login.");
+	logOutSuccessAlert.initOwner(primaryStage);
 	logOutSuccessAlert.showAndWait();
 	redirectLoginPage(event); /* redirect user to login scene */
     }
@@ -252,20 +261,22 @@ public class DashboardController {
      * @param event The ActionEvent object which passed from logOutUserHandler()
      */
     private void redirectLoginPage(ActionEvent event) {
-	LoginViewer loginViewer = new LoginViewer();
-
-	loginViewer.setPrimaryStage(primaryStage);
-	primaryStage.setTitle(loginViewer.getTitle());
-
 	try {
+	    LoginViewer loginViewer = new LoginViewer();
+	    loginViewer.setPrimaryStage(primaryStage);
+	    primaryStage.setTitle(loginViewer.getTitle());
+	    primaryStage.setResizable(false);
 	    primaryStage.setScene(loginViewer.getScene());
+	    /* Set primaryStage at the center of the screen */
+	    Rectangle2D screenVisualBounds = Screen.getPrimary().getVisualBounds();
+	    primaryStage.setY((screenVisualBounds.getHeight() - primaryStage.getHeight()) / 2);
+	    primaryStage.setX((screenVisualBounds.getWidth() - primaryStage.getWidth()) / 2);
 	} catch (IOException e) {
 	    Alert fileLoadingErrorAlert = AlertPopUp.getInstance().showErrorAlert("Fail loading LoginView.fxml",
 		    "LoginView.fxml file path is not found");
+	    fileLoadingErrorAlert.initOwner(primaryStage);
 	    fileLoadingErrorAlert.show();
 	}
-
-	primaryStage.setResizable(false);
     }
 
     /**
@@ -285,6 +296,7 @@ public class DashboardController {
 
 	    Alert addPostSuccess = AlertPopUp.getInstance().showInfoAlert(
 		    "Add Post Success. Your new post is now saved.", "Click OK to go back to dashboard.");
+	    addPostSuccess.initOwner(primaryStage);
 	    addPostSuccess.showAndWait();
 
 	    addPostIDInputField.setText("");
@@ -294,24 +306,29 @@ public class DashboardController {
 	    addPostDateTimeInputField.setText("");
 	} catch (EmptyInputException e) {
 	    Alert inputEmptyErrorAlert = AlertPopUp.getInstance().showErrorAlert("Add Post Failed", e.getMessage());
+	    inputEmptyErrorAlert.initOwner(primaryStage);
 	    inputEmptyErrorAlert.show();
 	} catch (ExistedPostIDException e) {
 	    Alert PostIDExistedAlert = AlertPopUp.getInstance().showErrorAlert("Add Post Failed", e.getMessage());
+	    PostIDExistedAlert.initOwner(primaryStage);
 	    PostIDExistedAlert.show();
 	} catch (NumberFormatException e) {
 	    Alert numberFormatErrorAlert = AlertPopUp.getInstance().showErrorAlert("Add Post Failed", e.getMessage());
+	    numberFormatErrorAlert.initOwner(primaryStage);
 	    numberFormatErrorAlert.show();
 	} catch (InvalidNegativeIntegerException e) {
 	    Alert integerNegativeErrorAlert = AlertPopUp.getInstance().showErrorAlert("Add Post Failed",
 		    e.getMessage());
+	    integerNegativeErrorAlert.initOwner(primaryStage);
 	    integerNegativeErrorAlert.show();
 	} catch (InvalidContentException e) {
-	    Alert integerNegativeErrorAlert = AlertPopUp.getInstance().showErrorAlert("Add Post Failed",
-		    e.getMessage());
-	    integerNegativeErrorAlert.show();
+	    Alert InvalidContentAlert = AlertPopUp.getInstance().showErrorAlert("Add Post Failed", e.getMessage());
+	    InvalidContentAlert.initOwner(primaryStage);
+	    InvalidContentAlert.show();
 	} catch (ParseException e) {
 	    Alert parseErrorAlert = AlertPopUp.getInstance().showErrorAlert("Add Post Failed",
 		    "Invalid date-time value or/and format. The date-time must be in the format of DD/MM/YYYY HH:MM.");
+	    parseErrorAlert.initOwner(primaryStage);
 	    parseErrorAlert.show();
 	}
     }
@@ -341,19 +358,23 @@ public class DashboardController {
 	    } else {
 		Alert postNotExistAlert = AlertPopUp.getInstance().showErrorAlert("Retreive Post Failed",
 			"Sorry the post does not exist in the database!");
+		postNotExistAlert.initOwner(primaryStage);
 		postNotExistAlert.show();
 	    }
 	} catch (EmptyInputException e) {
 	    Alert inputEmptyErrorAlert = AlertPopUp.getInstance().showErrorAlert("Retreive Post Failed",
 		    e.getMessage());
+	    inputEmptyErrorAlert.initOwner(primaryStage);
 	    inputEmptyErrorAlert.show();
 	} catch (NumberFormatException e) {
 	    Alert numberFormatErrorAlert = AlertPopUp.getInstance().showErrorAlert("Retreive Post Failed",
 		    e.getMessage());
+	    numberFormatErrorAlert.initOwner(primaryStage);
 	    numberFormatErrorAlert.show();
 	} catch (InvalidNegativeIntegerException e) {
 	    Alert integerNegativeErrorAlert = AlertPopUp.getInstance().showErrorAlert("Retreive Post Failed",
 		    e.getMessage());
+	    integerNegativeErrorAlert.initOwner(primaryStage);
 	    integerNegativeErrorAlert.show();
 	}
     }
@@ -363,7 +384,7 @@ public class DashboardController {
      * 
      * @param event The ActionEvent object which indicates that Remove
      *              button-clicked action occurred
-     * @throws ExistedPostIDException 
+     * @throws ExistedPostIDException
      */
     @FXML
     public void removePostHandler(ActionEvent event) {
@@ -374,23 +395,28 @@ public class DashboardController {
 	    if (success == true) {
 		Alert removePostSuccess = AlertPopUp.getInstance().showInfoAlert("Remove Post Success",
 			"The post is successfully removed from the database!");
+		removePostSuccess.initOwner(primaryStage);
 		removePostSuccess.showAndWait();
 		removePostIDInputField.setText("");
 	    } else {
 		Alert postNotExistAlert = AlertPopUp.getInstance().showErrorAlert("Remove Post Failed",
 			"Sorry the post does not exist in the database!");
+		postNotExistAlert.initOwner(primaryStage);
 		postNotExistAlert.show();
 	    }
 	} catch (EmptyInputException e) {
 	    Alert inputEmptyErrorAlert = AlertPopUp.getInstance().showErrorAlert("Remove Post Failed", e.getMessage());
+	    inputEmptyErrorAlert.initOwner(primaryStage);
 	    inputEmptyErrorAlert.show();
 	} catch (NumberFormatException e) {
 	    Alert numberFormatErrorAlert = AlertPopUp.getInstance().showErrorAlert("Remove Post Failed",
 		    e.getMessage());
+	    numberFormatErrorAlert.initOwner(primaryStage);
 	    numberFormatErrorAlert.show();
 	} catch (InvalidNegativeIntegerException e) {
 	    Alert integerNegativeErrorAlert = AlertPopUp.getInstance().showErrorAlert("Remove Post Failed",
 		    e.getMessage());
+	    integerNegativeErrorAlert.initOwner(primaryStage);
 	    integerNegativeErrorAlert.show();
 	}
     }
@@ -452,19 +478,23 @@ public class DashboardController {
 	    } else {
 		Alert selectedAuthorChoiceEmptyErrorAlert = AlertPopUp.getInstance()
 			.showErrorAlert("Retreive Top N Likes Post Failed", "Please select an author!");
+		selectedAuthorChoiceEmptyErrorAlert.initOwner(primaryStage);
 		selectedAuthorChoiceEmptyErrorAlert.show();
 	    }
 	} catch (EmptyInputException e) {
 	    Alert inputEmptyErrorAlert = AlertPopUp.getInstance().showErrorAlert("Retreive Top N Likes Post Failed",
 		    e.getMessage());
+	    inputEmptyErrorAlert.initOwner(primaryStage);
 	    inputEmptyErrorAlert.show();
 	} catch (NumberFormatException e) {
 	    Alert numberFormatErrorAlert = AlertPopUp.getInstance().showErrorAlert("Retreive Top N Likes Post Failed",
 		    e.getMessage());
+	    numberFormatErrorAlert.initOwner(primaryStage);
 	    numberFormatErrorAlert.show();
 	} catch (InvalidNonPositiveIntegerException e) {
 	    Alert integerNonPositiveErrorAlert = AlertPopUp.getInstance()
 		    .showErrorAlert("Retreive Top N Likes Post Failed", e.getMessage());
+	    integerNonPositiveErrorAlert.initOwner(primaryStage);
 	    integerNonPositiveErrorAlert.show();
 	}
     }
@@ -499,6 +529,7 @@ public class DashboardController {
 
 			Alert exportPostSuccess = AlertPopUp.getInstance().showInfoAlert("Export Post Success",
 				"The post is successfully exported into .csv file!");
+			exportPostSuccess.initOwner(primaryStage);
 			exportPostSuccess.showAndWait();
 
 			exportPostIDInputField.setText("");
@@ -506,23 +537,28 @@ public class DashboardController {
 		} catch (FileNotFoundException e) {
 		    Alert fileNotFoundErrorAlert = AlertPopUp.getInstance().showErrorAlert("Export Post Failed",
 			    "The file path is not found!");
+		    fileNotFoundErrorAlert.initOwner(primaryStage);
 		    fileNotFoundErrorAlert.show();
 		}
 	    } else {
 		Alert postNotExistAlert = AlertPopUp.getInstance().showErrorAlert("Export Post Failed",
 			"Sorry the post does not exist in the database!");
+		postNotExistAlert.initOwner(primaryStage);
 		postNotExistAlert.show();
 	    }
 	} catch (EmptyInputException e) {
 	    Alert inputEmptyErrorAlert = AlertPopUp.getInstance().showErrorAlert("Export Post Failed", e.getMessage());
+	    inputEmptyErrorAlert.initOwner(primaryStage);
 	    inputEmptyErrorAlert.show();
 	} catch (NumberFormatException e) {
 	    Alert numberFormatErrorAlert = AlertPopUp.getInstance().showErrorAlert("Export Post Failed",
 		    e.getMessage());
+	    numberFormatErrorAlert.initOwner(primaryStage);
 	    numberFormatErrorAlert.show();
 	} catch (InvalidNegativeIntegerException e) {
 	    Alert integerNegativeErrorAlert = AlertPopUp.getInstance().showErrorAlert("Export Post Failed",
 		    e.getMessage());
+	    integerNegativeErrorAlert.initOwner(primaryStage);
 	    integerNegativeErrorAlert.show();
 	}
     }
@@ -581,48 +617,57 @@ public class DashboardController {
 		} catch (EmptyInputException e) {
 		    Alert inputEmptyErrorAlert = AlertPopUp.getInstance().showErrorAlert("Import Post Failed",
 			    e.getMessage() + "\nClick OK to continue to next post.");
+		    inputEmptyErrorAlert.initOwner(primaryStage);
 		    inputEmptyErrorAlert.showAndWait();
 		} catch (NumberFormatException e) {
 		    Alert numberFormatErrorAlert = AlertPopUp.getInstance().showErrorAlert("Import Post Failed",
 			    e.getMessage() + "\nClick OK to continue to next post.");
+		    numberFormatErrorAlert.initOwner(primaryStage);
 		    numberFormatErrorAlert.showAndWait();
 		} catch (ExistedPostIDException e) {
 		    Alert PostIDExistedAlert = AlertPopUp.getInstance().showErrorAlert("Import Post Failed",
 			    e.getMessage() + "\nClick OK to continue to next post.");
+		    PostIDExistedAlert.initOwner(primaryStage);
 		    PostIDExistedAlert.showAndWait();
 		} catch (InvalidNegativeIntegerException e) {
 		    Alert integerNegativeErrorAlert = AlertPopUp.getInstance().showErrorAlert("Import Post Failed",
 			    e.getMessage() + "\nClick OK to continue to next post.");
+		    integerNegativeErrorAlert.initOwner(primaryStage);
 		    integerNegativeErrorAlert.showAndWait();
 		} catch (InvalidContentException e) {
 		    Alert contentFormatErrorAlert = AlertPopUp.getInstance().showErrorAlert("Import Post Failed",
 			    e.getMessage() + "\nClick OK to continue to next post.");
+		    contentFormatErrorAlert.initOwner(primaryStage);
 		    contentFormatErrorAlert.showAndWait();
 		} catch (ParseException e) {
 		    Alert parseErrorAlert = AlertPopUp.getInstance().showErrorAlert("Import Post Failed",
 			    "Invalid date-time value or/and format. The date-time must be in the format of DD/MM/YYYY HH:MM."
 				    + "\nClick OK to continue to next post.");
+		    parseErrorAlert.initOwner(primaryStage);
 		    parseErrorAlert.showAndWait();
 		}
 	    }
 	    scanner.close(); /* Close scanner. */
 	    inputStream.close(); /* Close posts.csv. */
 
-	    Alert importPostStatus = AlertPopUp.getInstance().showInfoAlert("Bulk Import Post Status",
+	    Alert importPostStatusAlert = AlertPopUp.getInstance().showInfoAlert("Bulk Import Post Status",
 		    String.format("%d post(s) is successfully imported ", postImportSuccess));
-	    importPostStatus.showAndWait();
-
+	    importPostStatusAlert.initOwner(primaryStage);
+	    importPostStatusAlert.showAndWait();
 	} catch (NullPointerException e) {
 	    Alert fileIsNullErrorAlert = AlertPopUp.getInstance().showErrorAlert("Import Post Failed",
 		    "File is null. Please select a .csv file!");
+	    fileIsNullErrorAlert.initOwner(primaryStage);
 	    fileIsNullErrorAlert.show();
 	} catch (FileNotFoundException e) {
 	    Alert fileNotFoundErrorAlert = AlertPopUp.getInstance().showErrorAlert("Import Post Failed",
 		    "File pathname did not exist! Please select a .csv file!");
+	    fileNotFoundErrorAlert.initOwner(primaryStage);
 	    fileNotFoundErrorAlert.show();
 	} catch (IOException e) {
 	    Alert IOErrorAlert = AlertPopUp.getInstance().showErrorAlert("Import Post Failed",
 		    "Failed or interrupted I/O operations when reading file! Please try again!");
+	    IOErrorAlert.initOwner(primaryStage);
 	    IOErrorAlert.show();
 	}
     }

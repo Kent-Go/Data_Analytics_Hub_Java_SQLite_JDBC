@@ -16,8 +16,10 @@ package analytics;
 import java.io.IOException;
 import analytics.view.LoginViewer;
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
@@ -53,7 +55,13 @@ public class Main extends Application {
 	    fileLoadingErrorAlert.show();
 	}
 	primaryStage.setResizable(false);
+	
 	primaryStage.show();
+
+	/* Set primaryStage at the center of the screen */
+	Rectangle2D screenVisualBounds = Screen.getPrimary().getVisualBounds();
+        primaryStage.setY((screenVisualBounds.getHeight() - primaryStage.getHeight()) / 2);
+        primaryStage.setX((screenVisualBounds.getWidth() - primaryStage.getWidth()) / 2);
     }
 
 }

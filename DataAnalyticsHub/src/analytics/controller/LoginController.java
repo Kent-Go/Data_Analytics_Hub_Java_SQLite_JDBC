@@ -22,8 +22,10 @@ import java.io.IOException;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
@@ -69,14 +71,23 @@ public class LoginController {
 	    primaryStage.setTitle(dashboardViewer.getTitle());
 	    primaryStage.setScene(dashboardViewer.getScene(loginUser));
 	    primaryStage.setResizable(false);
+
+	    /* Set primaryStage at the center of the screen */
+	    Rectangle2D screenVisualBounds = Screen.getPrimary().getVisualBounds();
+	    primaryStage.setY((screenVisualBounds.getHeight() - primaryStage.getHeight()) / 2);
+	    primaryStage.setX((screenVisualBounds.getWidth() - primaryStage.getWidth()) / 2);
+
 	} catch (EmptyInputException e) {
 	    Alert loginFailedAlert = AlertPopUp.getInstance().showErrorAlert("Login Failed", e.getMessage());
+	    loginFailedAlert.initOwner(primaryStage);
 	    loginFailedAlert.show();
 	} catch (UserVerificationFailException e) {
 	    Alert loginFailedAlert = AlertPopUp.getInstance().showErrorAlert("Login Failed", e.getMessage());
+	    loginFailedAlert.initOwner(primaryStage);
 	    loginFailedAlert.show();
 	} catch (IOException e) {
 	    Alert loginFailedAlert = AlertPopUp.getInstance().showErrorAlert("Login Failed", e.getMessage());
+	    loginFailedAlert.initOwner(primaryStage);
 	    loginFailedAlert.show();
 	}
     }
@@ -89,19 +100,22 @@ public class LoginController {
      */
     @FXML
     public void redirectSignUpHandler(ActionEvent event) {
-	SignUpViewer signUpViewer = new SignUpViewer();
-
-	signUpViewer.setPrimaryStage(primaryStage);
-	primaryStage.setTitle(signUpViewer.getTitle());
-
 	try {
+	    SignUpViewer signUpViewer = new SignUpViewer();
+	    signUpViewer.setPrimaryStage(primaryStage);
+	    primaryStage.setTitle(signUpViewer.getTitle());
 	    primaryStage.setScene(signUpViewer.getScene());
+	    primaryStage.setResizable(false);
+	    /* Set primaryStage at the center of the screen */
+	    Rectangle2D screenVisualBounds = Screen.getPrimary().getVisualBounds();
+	    primaryStage.setY((screenVisualBounds.getHeight() - primaryStage.getHeight()) / 2);
+	    primaryStage.setX((screenVisualBounds.getWidth() - primaryStage.getWidth()) / 2);
 	} catch (IOException e) {
 	    Alert fileLoadingErrorAlert = AlertPopUp.getInstance().showErrorAlert("Fail loading SignUpView.fxml",
 		    "SignUpView.fxml file path is not found");
+	    fileLoadingErrorAlert.initOwner(primaryStage);
 	    fileLoadingErrorAlert.show();
 	}
 
-	primaryStage.setResizable(false);
     }
 }

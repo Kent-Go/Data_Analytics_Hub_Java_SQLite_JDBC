@@ -12,8 +12,11 @@
  */
 package analytics.controller;
 
+import javafx.geometry.Dimension2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.stage.Screen;
 
 /**
  * 

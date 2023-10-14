@@ -22,8 +22,10 @@ import java.io.IOException;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
@@ -68,17 +70,21 @@ public class SignUpController {
 
 	    Alert SignUpSuccessAlert = AlertPopUp.getInstance()
 		    .showInfoAlert("Sign Up Success. Your user profile is created.", "Click OK to proceed to login.");
+	    SignUpSuccessAlert.initOwner(primaryStage);
 	    SignUpSuccessAlert.showAndWait();
 
 	    redirectLoginPageHandler(event); /* redirect the user to login scene */
 	} catch (EmptyInputException e) {
 	    Alert signUpFailedAlert = AlertPopUp.getInstance().showErrorAlert("Sign Up Failed", e.getMessage());
+	    signUpFailedAlert.initOwner(primaryStage);
 	    signUpFailedAlert.show();
 	} catch (UsernameExistedException e) {
 	    Alert signUpFailedAlert = AlertPopUp.getInstance().showErrorAlert("Sign Up Failed", e.getMessage());
+	    signUpFailedAlert.initOwner(primaryStage);
 	    signUpFailedAlert.show();
 	} catch (InvalidPasswordLengthException e) {
 	    Alert signUpFailedAlert = AlertPopUp.getInstance().showErrorAlert("Sign Up Failed", e.getMessage());
+	    signUpFailedAlert.initOwner(primaryStage);
 	    signUpFailedAlert.show();
 	}
     }
@@ -91,19 +97,21 @@ public class SignUpController {
      */
     @FXML
     public void redirectLoginPageHandler(ActionEvent event) {
-	LoginViewer loginViewer = new LoginViewer();
-
-	loginViewer.setPrimaryStage(primaryStage);
-	primaryStage.setTitle(loginViewer.getTitle());
-
 	try {
+	    LoginViewer loginViewer = new LoginViewer();
+	    loginViewer.setPrimaryStage(primaryStage);
+	    primaryStage.setTitle(loginViewer.getTitle());
 	    primaryStage.setScene(loginViewer.getScene());
+	    primaryStage.setResizable(false);
+	    /* Set primaryStage at the center of the screen */
+	    Rectangle2D screenVisualBounds = Screen.getPrimary().getVisualBounds();
+	    primaryStage.setY((screenVisualBounds.getHeight() - primaryStage.getHeight()) / 2);
+	    primaryStage.setX((screenVisualBounds.getWidth() - primaryStage.getWidth()) / 2);
 	} catch (IOException e) {
 	    Alert fileLoadingErrorAlert = AlertPopUp.getInstance().showErrorAlert("Fail loading LoginView.fxml",
 		    "LoginView.fxml file path is not found");
+	    fileLoadingErrorAlert.initOwner(primaryStage);
 	    fileLoadingErrorAlert.show();
 	}
-
-	primaryStage.setResizable(false);
     }
 }

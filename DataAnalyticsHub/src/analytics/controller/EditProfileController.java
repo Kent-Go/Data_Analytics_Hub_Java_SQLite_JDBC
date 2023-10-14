@@ -21,9 +21,11 @@ import analytics.view.DashboardViewer;
 import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
@@ -100,6 +102,7 @@ public class EditProfileController {
 
 	    Alert EditProfileScucessAlert = AlertPopUp.getInstance().showInfoAlert(
 		    "Edit Profile Success. Your new user profile is now saved.", "Click OK to go back to dashboard.");
+	    EditProfileScucessAlert.initOwner(primaryStage);
 	    EditProfileScucessAlert.showAndWait();
 
 	    redirectDashboardPageHandler(event); /* redirect to dashboard */
@@ -107,14 +110,17 @@ public class EditProfileController {
 
 	    Alert editProfileFailedAlert = AlertPopUp.getInstance().showErrorAlert("Edit Profile Failed",
 		    e.getMessage());
+	    editProfileFailedAlert.initOwner(primaryStage);
 	    editProfileFailedAlert.show();
 	} catch (UsernameExistedException e) {
 	    Alert editProfileFailedAlert = AlertPopUp.getInstance().showErrorAlert("Edit Profile Failed",
 		    e.getMessage());
+	    editProfileFailedAlert.initOwner(primaryStage);
 	    editProfileFailedAlert.show();
 	} catch (InvalidPasswordLengthException e) {
 	    Alert editProfileFailedAlert = AlertPopUp.getInstance().showErrorAlert("Edit Profile Failed",
 		    e.getMessage());
+	    editProfileFailedAlert.initOwner(primaryStage);
 	    editProfileFailedAlert.show();
 	}
     }
@@ -128,20 +134,22 @@ public class EditProfileController {
      */
     @FXML
     public void redirectDashboardPageHandler(ActionEvent event) {
-	DashboardViewer dashboardViewer = new DashboardViewer();
-
-	dashboardViewer.setPrimaryStage(primaryStage);
-	primaryStage.setTitle(dashboardViewer.getTitle());
-
 	try {
+	    DashboardViewer dashboardViewer = new DashboardViewer();
+	    dashboardViewer.setPrimaryStage(primaryStage);
+	    primaryStage.setTitle(dashboardViewer.getTitle());
+	    primaryStage.setResizable(false);
 	    primaryStage.setScene(dashboardViewer.getScene(updatedUser));
+	    /* Set primaryStage at the center of the screen */
+	    Rectangle2D screenVisualBounds = Screen.getPrimary().getVisualBounds();
+	    primaryStage.setY((screenVisualBounds.getHeight() - primaryStage.getHeight()) / 2);
+	    primaryStage.setX((screenVisualBounds.getWidth() - primaryStage.getWidth()) / 2);
 	} catch (IOException e) {
 	    Alert fileLoadingErrorAlert = AlertPopUp.getInstance().showErrorAlert("Fail loading DashboardView.fxml",
 		    "DashboardView.fxml file path is not found");
+	    fileLoadingErrorAlert.initOwner(primaryStage);
 	    fileLoadingErrorAlert.show();
 	}
-
-	primaryStage.setResizable(false);
     }
 
     /**
@@ -152,19 +160,20 @@ public class EditProfileController {
      *              button-clicked action occurred
      */
     public void cancelEditProfileHandler(ActionEvent event) {
-	DashboardViewer dashboardViewer = new DashboardViewer();
-
-	dashboardViewer.setPrimaryStage(primaryStage);
-	primaryStage.setTitle(dashboardViewer.getTitle());
-
 	try {
+	    DashboardViewer dashboardViewer = new DashboardViewer();
+	    dashboardViewer.setPrimaryStage(primaryStage);
+	    primaryStage.setTitle(dashboardViewer.getTitle());
 	    primaryStage.setScene(dashboardViewer.getScene(loginUser));
+	    /* Set primaryStage at the center of the screen */
+	    Rectangle2D screenVisualBounds = Screen.getPrimary().getVisualBounds();
+	    primaryStage.setY((screenVisualBounds.getHeight() - primaryStage.getHeight()) / 2);
+	    primaryStage.setX((screenVisualBounds.getWidth() - primaryStage.getWidth()) / 2);
 	} catch (IOException e) {
 	    Alert fileLoadingErrorAlert = AlertPopUp.getInstance().showErrorAlert("Fail loading LoginView.fxml",
 		    "LoginView.fxml file path is not found");
+	    fileLoadingErrorAlert.initOwner(primaryStage);
 	    fileLoadingErrorAlert.show();
 	}
-
-	primaryStage.setResizable(false);
     }
 }
