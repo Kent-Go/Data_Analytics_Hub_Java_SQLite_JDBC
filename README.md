@@ -1,8 +1,5 @@
-# Advanced Programming - s3955624 - Data-Analytics-Hub
+# Java Data Analytics Hub with MVC framework
 
-# Link: https://github.com/rmit-kent-go/s3955624-Data-Analytics-Hub
-
-#### Student Number: s3955624
 #### Student Name: Go Chee Kin
 
 ## Tech Stack
