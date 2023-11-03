@@ -15,7 +15,7 @@
 ### Clone the project
 
 ```bash
-  https://github.com/rmit-kent-go/s3955624-Data-Analytics-Hub
+  https://github.com/Kent-Go/Java_Data_Analytics_Hub_with_MVC
 ```
 
 ### Add .jar files to build path
